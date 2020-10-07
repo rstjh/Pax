@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from tasks import AFFILIATIONS
+from api.models.tasks import AFFILIATIONS
 
 
 SPECIALISM = (

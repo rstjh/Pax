@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from tasks import TasksModel
+from api.models.tasks import TasksModel
 
 
 class EffectActions(serializers.Serializer):

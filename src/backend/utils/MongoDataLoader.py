@@ -1,13 +1,13 @@
 import json
 import pymongo as pm
 
-from data.EffectData import default_effects
-from data.ActionTemplateData import default_action_templates
-from data.CVISystemData import default_cvi_systems
-from data.NetworkData import default_device_network
-from data.RiskAppetite import default_risk_appetite
-from data.MissionData import default_missions
-from data.UnitData import default_units
+from utils.data.EffectData import default_effects
+from utils.data.ActionTemplateData import default_action_templates
+from utils.data.CVISystemData import default_cvi_systems
+from utils.data.NetworkData import default_device_network
+from utils.data.RiskAppetite import default_risk_appetite
+from utils.data.MissionData import default_missions
+from utils.data.UnitData import default_units
 
 from utils import SystemConfig as config
 
@@ -28,7 +28,7 @@ def reset_app_data():
         'units': default_units,
         'actionInstances': None
     }
-    for coll, data in coll_data.iteritems():
+    for coll, data in coll_data.items():
         reset_mongo_data(
             collection=coll,
             mongo_data=data)

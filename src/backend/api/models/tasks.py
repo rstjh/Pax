@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from effects import EFFECTS_LIST
+from api.models.effects import EFFECTS_LIST
 
 
 AFFILIATIONS = (

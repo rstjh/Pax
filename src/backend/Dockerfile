@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.5
 
 # Set up apt-get
 RUN apt-get -qq update
@@ -10,7 +10,7 @@ RUN apt-get -y install -qq -y build-essential libffi-dev python-dev
 RUN mkdir /Pax
 WORKDIR /Pax
 ADD requirements.txt /Pax/
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Add the Pax directory
 ADD . /Pax/

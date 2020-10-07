@@ -75,7 +75,7 @@ class GenerateCoursesOfAction(ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         data = request.data
-        print data["type"]
+        print(data["type"])
         if not data["type"]=="depth" and not data["type"]=="breadth":
             context = {
                 "message": '"type" field must be "depth" or "breadth"'

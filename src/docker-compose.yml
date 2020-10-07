@@ -1,38 +1,38 @@
- version: '2'
- services:
-   pax:
-     restart: unless-stopped
-     image: pax:latest
-     command: python /Pax/manage.py runserver 0.0.0.0:8200
-     ports:
-       - "8200:8200"
-     volumes:
-       - "./backend/:/Pax/"
-     depends_on:
-       - pax-db
-     environment:
-       - DB_PORT=8210
-       - DB_HOSTNAME=pax-db
-       - UI_PORT=3000
-       - UI_HOSTNAME=loclhost
-       - PAX_PORT=8200
-       - PAX_HOSTNAME=pax
-       - DB_NAME=PaxDB
-
-  pax-gui:
+version: '2'
+services:
+ pax:
     restart: unless-stopped
-    image: pax-gui:latest
-    container_name: pax-gui
+    image: pax:latest
+    command: python /Pax/manage.py runserver 0.0.0.0:8200
     ports:
-      - "3000:3000"
+      - "8200:8200"
     volumes:
-      - "./webserver/gui/:/gui/"
+      - "./backend/:/Pax/"
     depends_on:
-      - pax
+      - pax-db
+    environment:
+      - DB_PORT=8210
+      - DB_HOSTNAME=pax-db
+      - UI_PORT=3000
+      - UI_HOSTNAME=loclhost
+      - PAX_PORT=8200
+      - PAX_HOSTNAME=pax
+      - DB_NAME=PaxDB
 
-  pax-db:
-    restart: unless-stopped
-    image: mongo:latest
-    command: mongod --port 8210
-    ports:
-      - "8210:8210"
+ pax-gui:
+   restart: unless-stopped
+   image: pax-gui:latest
+   container_name: pax-gui
+   ports:
+     - "3000:3000"
+   volumes:
+     - "./webserver/gui/:/gui/"
+   depends_on:
+     - pax
+
+ pax-db:
+   restart: unless-stopped
+   image: mongo:latest
+   command: mongod --port 8210
+   ports:
+     - "8210:8210"

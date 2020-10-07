@@ -7,12 +7,12 @@
     "url": "https://github.com/O1sims/Pax.git"
   },
   "scripts": {
-    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" ",
+    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" \"npm view package.json\"",
     "lite": "lite-server",
-    "postinstall": "typings install",
+    "postinstall": "types install",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "typings": "typings"
+    "typings": "types"
   },
   "license": "ISC",
   "dependencies": {
