@@ -191,7 +191,7 @@ def get_most_likely_target_asset(system_data):
             vulnerabilities=system_data['vulnerabilities']
         )
         if no_of_vulnerabilities >= max_vulnerabilities:
-            max_vulnerabilities = system_data['vulnerabilities']
+            max_vulnerabilities = no_of_vulnerabilities
             most_likely_target_asset = asset
     return most_likely_target_asset
 

@@ -20,7 +20,7 @@ export class AssetInfoService {
   };
 
   getUnitDistance(systemId, assetId, actorId) {
-    return this._http.get<any>(environment.API_BASE_URL + '/application/geolocation/distance/' + systemId + '/' + assetId + '/' + actorId + '/');
+    return this._http.get<any>(this.api + '/geolocation/distance/' + systemId + '/' + assetId + '/' + actorId + '/');
   };
 
   getAssetLocation(systemId, assetId) {
@@ -69,8 +69,12 @@ export class AssetInfoService {
 		}));
   };
 
+  // Callers use effects as names (rendered in dropdowns and set as a task's
+  // `effect`), so map the stored documents down to their names.
   getEffects() {
-    return this._http.get<any>(this.api + '/effects/');
+    return this._http.get<any>(this.api + '/effects/').pipe(
+      map((effects) => effects.map((e) => e['effect'] || e))
+    );
   };
 
   getObjectives(systemId) {

@@ -53,9 +53,15 @@ export class RiskGraphService {
     );
   };
 
+  // Courses of action live in the external C2 when one is configured, and in
+  // Pax's own store otherwise. Both expose the same coa/... route shape.
+  coaBase() {
+    return this.C2REST ? this.C2REST : this.api + '/coa/';
+  };
+
   // POST Task
   postTask(missionId, coaId, task) {
-    return this.http.post<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task', JSON.stringify(task), {
+    return this.http.post<any>(this.coaBase() + 'mission/' + missionId + '/coa/' + coaId + '/task', JSON.stringify(task), {
 			headers: { 'Content-Type': 'application/json' },
 			observe: 'response'
 		}).pipe(map((res) => {
@@ -69,7 +75,7 @@ export class RiskGraphService {
 
   // DELETE Task
   deleteTask(missionId, coaId, taskId) {
-    return this.http.delete<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task/' + taskId, {
+    return this.http.delete<any>(this.coaBase() + 'mission/' + missionId + '/coa/' + coaId + '/task/' + taskId, {
       observe: 'response'
     }).pipe(map((res) => {
 			if (res) {
@@ -82,7 +88,7 @@ export class RiskGraphService {
 
   // Create new COA
   postCOA(missionId, name) {
-    return this.http.post<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + name, null, {
+    return this.http.post<any>(this.coaBase() + 'mission/' + missionId + '/coa/' + name, null, {
       observe: 'response'
     }).pipe(map((res) => {
 			if (res) {
@@ -93,7 +99,7 @@ export class RiskGraphService {
 
   // DELETE COA
   deleteCOA(missionId, coaId) {
-    return this.http.delete<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId, {
+    return this.http.delete<any>(this.coaBase() + 'mission/' + missionId + '/coa/' + coaId, {
       observe: 'response'
     }).pipe(map((res) => {
       if (res) {

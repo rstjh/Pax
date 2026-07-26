@@ -4,12 +4,16 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
+from api.views.action_estimated_time import ActionEstimatedTime
 from api.views.action_instances import ActionInstancesView
+from api.views.coa import CourseOfActionListView, CourseOfActionView, \
+    CourseOfActionTaskView, CourseOfActionTaskDetailView
 from api.views.action_list import ActionListForceDetail, ActionListForceEffectDetail
 from api.views.action_templates import ActionTemplatesView
 from api.views.courses_of_action import GenerateCoursesOfAction
 from api.views.cvi_systems import CVIView, CVISystemView
 from api.views.effects import EffectsView
+from api.views.geolocation import AssetActorDistance
 from api.views.hostile_responses import HostileResponsesView, HostileResponseDetailView
 from api.views.index import IndexView
 from api.views.missions import MissionIdView, MissionsView
@@ -82,6 +86,16 @@ urlpatterns = format_suffix_patterns([
         api_config.API_VERSION),
         ActionInstancesView.as_view()),
 
+    # Geolocation
+    url(r'^api/v{}/geolocation/distance/(?P<systemId>[^/]+)/(?P<assetId>[^/]+)/(?P<actorId>[^/]+)/$'.format(
+        api_config.API_VERSION),
+        AssetActorDistance.as_view()),
+
+    # Estimated task times
+    url(r'^api/v{}/actions/estimated_time/(?P<systemId>.+)/$'.format(
+        api_config.API_VERSION),
+        ActionEstimatedTime.as_view()),
+
     # Action list
     url(r'^api/v{}/action_list/all/(?P<force>.+)/$'.format(
         api_config.API_VERSION),
@@ -90,6 +104,23 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/v{}/action_list/type/(?P<force>.+)/(?P<effect>.+)/(?P<type>.+)/$'.format(
         api_config.API_VERSION),
         ActionListForceEffectDetail.as_view()),
+
+    # Courses of action (local stand-in for the C2's coa/... routes)
+    url(r'^api/v{}/coa/mission/(?P<missionId>[^/]+)/coa/$'.format(
+        api_config.API_VERSION),
+        CourseOfActionListView.as_view()),
+
+    url(r'^api/v{}/coa/mission/(?P<missionId>[^/]+)/coa/(?P<coa>[^/]+)/task$'.format(
+        api_config.API_VERSION),
+        CourseOfActionTaskView.as_view()),
+
+    url(r'^api/v{}/coa/mission/(?P<missionId>[^/]+)/coa/(?P<coa>[^/]+)/task/(?P<taskId>[^/]+)$'.format(
+        api_config.API_VERSION),
+        CourseOfActionTaskDetailView.as_view()),
+
+    url(r'^api/v{}/coa/mission/(?P<missionId>[^/]+)/coa/(?P<coa>[^/]+)$'.format(
+        api_config.API_VERSION),
+        CourseOfActionView.as_view()),
 
     # Course of action
     url(r'api/v{}/course_of_action/generate/$'.format(

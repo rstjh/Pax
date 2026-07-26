@@ -1,3 +1,4 @@
+from functools import reduce
 from analytics.UnitAnalysis import get_unit_data
 from analytics.ActionAnalysis import get_action_time
 from analytics.SystemRisk import evaluate_system_risk, task_likelihood_from_risk_data

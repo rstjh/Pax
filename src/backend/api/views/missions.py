@@ -7,6 +7,7 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView
 from drf_yasg.utils import swagger_auto_schema
 
 from api.models.missions import MissionsModel
+from api.services.courses_of_action_store import attach_courses_of_action
 
 
 class MissionsView(ListCreateAPIView):
@@ -24,6 +25,7 @@ class MissionsView(ListCreateAPIView):
         missions_list = list(self.missions_collection.find())
         for mission in missions_list:
             mission['_id'] = str(mission['_id'])
+            attach_courses_of_action(mission)
         return Response(
             data=missions_list,
             status=200)
@@ -50,7 +52,10 @@ class MissionIdView(ListAPIView):
     @swagger_auto_schema(responses={200: "OK"})
     def get(self, request, *args, **kwargs):
         mission = list(self.missions_collection.find(
-            {"id": self.kwargs['missionId']}))
+            {"id": self.kwargs['missionId']},
+            {"_id": 0}))
+        for m in mission:
+            attach_courses_of_action(m)
         return Response(
             data=mission,
             status=200)

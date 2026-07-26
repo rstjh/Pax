@@ -9,6 +9,10 @@ from utils import SystemConfig as config
 
 
 def get_mission_data_from_system_id(system_id, id_only=False):
+    if not config.C2_REST:
+        # Mission overlays (the per-asset map annotations this is read for)
+        # only exist in the C2. Callers handle the absence.
+        return None
     get_missions = requests.get('http://{}missions'.format(config.C2_REST))
     missions = get_missions.json()
 
@@ -23,6 +27,8 @@ def get_mission_data_from_system_id(system_id, id_only=False):
 
 
 def get_asset_coordinates(mission_data, asset_id):
+    if not mission_data or not mission_data.get('overlays'):
+        return None
     for overlay in mission_data['overlays']:
         for drawing in overlay['drawings']:
             if drawing['represents']['entityId'].lower() == asset_id.lower():
