@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HTTP_PROVIDERS } from "@angular/http";
 
-import * as L from 'leaflet';
+import * as Lns from 'leaflet';
+// SystemJS wraps this CJS module's exports under Lns.default rather than
+// exposing them directly on the namespace object; unwrap it here.
+const L = ((Lns as any).default || Lns) as typeof Lns;
 
-import { Modal } from 'angular2-modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { RiskGraphService } from './risk-graph.service';
 import { AssetInfoService } from './modals/asset-info/asset.info.modal.service';
@@ -21,12 +23,12 @@ declare var google: any;
 @Component({
   selector: 'RiskGraph',
   templateUrl: "app/risk-graph/risk-graph.component.html",
-  providers: [RiskGraphService, AssetInfoService, Modal, HTTP_PROVIDERS]
+  providers: [RiskGraphService, AssetInfoService]
 })
 
 
 export class RiskGraphComponent implements OnInit {
-  layers = [
+  layers: L.Layer[] = [
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
       maxZoom: 18,
@@ -260,11 +262,9 @@ private candlestickData;
 private candlestickChart;
 
 constructor(private route: ActivatedRoute,
-  vcRef: ViewContainerRef,
-  public modal: Modal,
+  public modal: BsModalService,
   private riskGraphService: RiskGraphService,
   private assetInfoService: AssetInfoService) {
-    modal.defaultViewContainer = vcRef;
   };
 
   ngOnInit() {
@@ -1450,13 +1450,13 @@ constructor(private route: ActivatedRoute,
             var actorData = this.unitList[i];
           };
         };
-        return this.modal.open(ActionWindow, new ActionWindowData(
+        return this.modal.show(ActionWindow, { initialState: new ActionWindowData(
           this.systemId,
           task,
           objectiveData,
           actorData,
           parentTasks,
-          this.assetRiskData[objectiveId]['risks'][0]['riskScore'])
+          this.assetRiskData[objectiveId]['risks'][0]['riskScore']), class: 'modal-lg' }
         );
       };
 
@@ -2552,17 +2552,17 @@ constructor(private route: ActivatedRoute,
             };
 
             function onClickAssetInfo(event) {
-              return modal.open(AssetInfoWindow, new AssetInfoWindowData(
+              return modal.show(AssetInfoWindow, { initialState: new AssetInfoWindowData(
                 event,
                 assetRiskData[event['id']]['risks'][0],
                 systemId,
                 systemData,
                 missionData
-              ));
+              ), class: 'modal-lg' });
             };
 
             function onClickThreatInfo(event) {
-              return modal.open(ThreatInfoWindow, new ThreatInfoWindowData(event));
+              return modal.show(ThreatInfoWindow, { initialState: new ThreatInfoWindowData(event), class: 'modal-lg' });
             };
 
             getNodeInfoData(systemData);

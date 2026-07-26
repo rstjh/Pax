@@ -1,253 +1,125 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod, URLSearchParams } from "@angular/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from '../../../environment/environment';
 import { Injectable } from '@angular/core';
-
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
 
 @Injectable()
 export class AssetInfoService {
-  api:string = "/api/v" + environment.API_VERSION;
+  api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
 
-  constructor(private _http: Http) {
+  constructor(private _http: HttpClient) {
 	}
 
   getMissionData() {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/missions'
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/missions');
   };
 
   getAssetVulnerabilities(systemId, assetId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/system/vulnerabilities/' + systemId + '/' + assetId + '/'
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/system/vulnerabilities/' + systemId + '/' + assetId + '/');
   };
 
   getUnitDistance(systemId, assetId, actorId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/geolocation/distance/' + systemId + '/' + assetId + '/' + actorId + '/'
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/geolocation/distance/' + systemId + '/' + assetId + '/' + actorId + '/');
   };
 
   getAssetLocation(systemId, assetId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/system/location/' + systemId + '/' + assetId + '/'
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/system/location/' + systemId + '/' + assetId + '/');
   };
 
 
   getAssetThreats(systemId, assetId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/system/threats/' + systemId + '/' + assetId + '/'
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/system/threats/' + systemId + '/' + assetId + '/');
   };
 
   getAllEffectsBasedActions(systemId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/actions/effects/' + systemId
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/actions/effects/' + systemId);
   };
 
   getEffectsBasedActionsObjective(systemId, objectiveId) {
-    let params = new URLSearchParams();
-    params.set('objective', objectiveId);
+    let params = new HttpParams().set('objective', objectiveId);
 
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/actions/effects/' + systemId,
-      search: params
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this._http.get<any>(environment.API_BASE_URL + '/application/actions/effects/' + systemId, { params });
   };
 
   postEffectsBasedAction(systemId, effectActionData) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/actions/effects/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(effectActionData)
-		});
-
-    return this._http.request(new Request(requestoptions))
-		.map((res: Response) => {
+    return this._http.post<any>(environment.API_BASE_URL + '/application/actions/effects/' + systemId + '/', JSON.stringify(effectActionData), {
+			headers: { 'Content-Type': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				}
 			}
-		});
+		}));
   };
 
   deleteEffectsBasedActions(systemId, taskIds) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Delete,
-      url: 'application/actions/effects/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify({'effectIds': taskIds})
-    });
-
-    return this._http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this._http.request<any>('DELETE', environment.API_BASE_URL + '/application/actions/effects/' + systemId + '/', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({'effectIds': taskIds}),
+      observe: 'response'
+    }).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				}
 			}
-		});
+		}));
   };
 
   getEffects() {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: this.api + '/effects/'
-		});
-
-    return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+    return this._http.get<any>(this.api + '/effects/');
   };
 
   getObjectives(systemId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/system/assets/' + systemId
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/system/assets/' + systemId);
   };
 
   getUnits(systemId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/system/units/' + systemId
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/system/units/' + systemId);
   };
 
   getUnitsAsset(systemId, assetId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/system/unit_distance/' + systemId + '/' + assetId
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/system/unit_distance/' + systemId + '/' + assetId);
   };
 
   getNodeData(globalId) {
-    let params = new URLSearchParams();
-    params.set('globalId', globalId);
+    let params = new HttpParams().set('globalId', globalId);
 
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/node-data',
-      search: params
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/node-data', { params });
   };
 
   getThreatData(assetId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/threats/asset/' + assetId
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/threats/asset/' + assetId);
   };
 
   getVulnerabilityData(assetId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/vulnerabilities/asset/' + assetId
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/vulnerabilities/asset/' + assetId);
   };
 
   getDevices(assetId) {
-    let params = new URLSearchParams();
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/devices/asset/' + assetId,
-      search: params
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/devices/asset/' + assetId);
   };
 
   getActions(assetId) {
-    let params = new URLSearchParams();
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/actions/asset/id/' + assetId,
-      search: params
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this._http.get<any>(environment.API_BASE_URL + '/application/actions/asset/id/' + assetId);
   };
 
   toggleAction(actionId, newStagedStatus) {
     var data = {
       'staged': newStagedStatus
     };
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-		headers.append("Accept", 'application/json');
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Patch,
-			url: 'application/actions/staged/' + actionId,
-      headers: headers,
-      body: JSON.stringify(data)
-		});
-    return this._http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this._http.patch<any>(environment.API_BASE_URL + '/application/actions/staged/' + actionId, JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      observe: 'response'
+    }).pipe(map((res) => {
 			if (res) {
         return {
           data : res.status
         }
       }
-		});
+		}));
   };
 }

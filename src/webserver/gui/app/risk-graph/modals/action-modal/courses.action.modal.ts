@@ -1,17 +1,13 @@
 declare let d3: any;
 
 import { Component, OnInit } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
 
-import { nvD3 } from 'ng2-nvd3';
-
-import { DialogRef, ModalComponent } from 'angular2-modal';
-import { BSModalContext } from 'angular2-modal/plugins/bootstrap';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ActionModalService } from './courses.service';
 
 
-export class ActionWindowData extends BSModalContext {
+export class ActionWindowData {
   constructor(
     public systemId: string,
     public actionData: object,
@@ -19,21 +15,18 @@ export class ActionWindowData extends BSModalContext {
     public actorData: object,
     public parentTasks: object[],
     public riskScore: number
-  ) {
-    super();
-  }
+  ) {}
 };
 
 
 @Component({
   selector: 'modal-content',
   templateUrl: './app/risk-graph/modals/action-modal/courses.action.modal.html',
-  directives: [nvD3],
-  providers: [ActionModalService, HTTP_PROVIDERS]
+  providers: [ActionModalService]
 })
 
 
-export class ActionWindow implements ModalComponent<ActionWindowData>, OnInit {
+export class ActionWindow implements OnInit {
   taskId: string;
   systemId: string;
 
@@ -65,16 +58,8 @@ export class ActionWindow implements ModalComponent<ActionWindowData>, OnInit {
   objectiveData:object = {};
   actionList:string[] = [];
 
-  constructor(public dialog: DialogRef<ActionWindowData>,
+  constructor(public dialog: BsModalRef,
     private actionModalService: ActionModalService) {
-      dialog.context.size = 'lg';
-      this.systemId = dialog.context['systemId'];
-      this.actionData = dialog.context['actionData'];
-      this.parentTasks = dialog.context['parentTasks'];
-      this.riskScore = dialog.context['riskScore'];
-      this.actorData = dialog.context['actorData'];
-      this.objectiveData = dialog.context['objectiveData'];
-      this.taskId = this.actionData['taskId'];
     };
 
     taskInformationView() {
@@ -136,6 +121,7 @@ export class ActionWindow implements ModalComponent<ActionWindowData>, OnInit {
 
 
     ngOnInit() {
+      this.taskId = this.actionData['taskId'];
       this.heatmapSpinner = 1;
       this.allTasks = this.prepareTasks(this.actionData, this.parentTasks);
       this.actionModalService.postEffects(this.systemId, this.allTasks)
@@ -764,6 +750,6 @@ export class ActionWindow implements ModalComponent<ActionWindowData>, OnInit {
   };
 
   closeModal() {
-    this.dialog.close();
+    this.dialog.hide();
   };
 }

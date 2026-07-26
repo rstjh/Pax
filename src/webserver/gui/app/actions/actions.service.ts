@@ -1,124 +1,77 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../environment/environment';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ActionsService  {
-  constructor(private http: Http) {
+  api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
+
+  constructor(private http: HttpClient) {
   };
 
   deleteEffect(effect) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Delete,
-      url: 'application/hostile_response/' + effect + '/'
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.delete<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect + '/', {
+      observe: 'response'
+    }).pipe(map((res) => {
       if (res) {
         return {
           status: res.status
         }
       }
-    });
+    }));
   };
 
   getHostileResponses(effect) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/hostile_response/' + effect
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect);
   };
 
   patchHostileResponse(effect, hostileResponse) {
-    var headers = new Headers();
-    headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Patch,
-      url: 'application/hostile_response/' + effect + '/',
-      headers: headers,
-      body: JSON.stringify(hostileResponse)
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.patch<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect + '/', JSON.stringify(hostileResponse), {
+      headers: { 'Content-Type': 'application/json' },
+      observe: 'response'
+    }).pipe(map((res) => {
       if (res) {
         return {
           status: res.status
         }
       }
-    });
+    }));
   };
 
   submitNewEffect(data) {
-    var headers = new Headers();
-    headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Post,
-      url: 'application/hostile_response/',
-      headers: headers,
-      body: JSON.stringify(data)
-    });
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.post<any>(environment.API_BASE_URL + '/application/hostile_response/', JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+      observe: 'response'
+    }).pipe(map((res) => {
       if (res) {
         return { status: res.status }
       }
-    });
+    }));
   };
 
   getEffects() {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/effects/'
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(this.api + '/effects/');
   };
 
   getEffectTypes() {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'app/actions/data/effect.types.json'
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>('app/actions/data/effect.types.json');
   };
 
   getActionData(force="hostile") {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: 'application/action_list/all/' + force
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(this.api + '/action_list/all/' + force);
   };
 
   patchActionData(actions, force, effect, type) {
-    var headers = new Headers();
-    headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Patch,
-      url: 'application/action_list/type/' + force + '/' + effect + '/' + type + '/',
-      headers: headers,
-      body: JSON.stringify(actions)
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.patch<any>(this.api + '/action_list/type/' + force + '/' + effect + '/' + type + '/', JSON.stringify(actions), {
+      headers: { 'Content-Type': 'application/json' },
+      observe: 'response'
+    }).pipe(map((res) => {
       if (res) {
         return {
           status: res.status
         }
       }
-    });
+    }));
   };
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit, Injectable, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
+import { Component, OnInit, Injectable, ViewEncapsulation } from '@angular/core';
 
-import * as Survey from 'survey-angular';
-import { Modal } from 'angular2-modal';
+import * as SurveyNs from 'survey-angular';
+// SystemJS wraps this CJS module's exports under SurveyNs.default rather than
+// exposing them directly on the namespace object; unwrap it here.
+const Survey = ((SurveyNs as any).default || SurveyNs) as typeof SurveyNs;
 
 import { CVIService } from './cvi.service';
 
@@ -13,7 +14,7 @@ import 'rxjs/add/operator/map';
 @Component({
   selector: 'CVI',
   templateUrl: 'app/cvi/cvi.component.html',
-  providers: [CVIService, Modal, HTTP_PROVIDERS]
+  providers: [CVIService]
 })
 
 
@@ -25,12 +26,11 @@ export class CVIComponent implements OnInit {
   sentSampleDataError = 0;
   sentSampleDataSuccess = 0;
 
-  constructor(vcRef: ViewContainerRef, public modal: Modal, private CVIService: CVIService) {
-    modal.defaultViewContainer = vcRef;
+  constructor(private CVIService: CVIService) {
   };
 
   ngOnInit() {
-    Survey.Survey.cssType = "bootstrap";
+    Survey.StylesManager.applyTheme("bootstrap");
     Survey.defaultBootstrapCss.navigationButton = "btn btn-success";
     Survey.defaultBootstrapCss.matrixdynamic.button = "btn btn-default";
     Survey.defaultBootstrapCss.progressBar = "progress-bar progress-bar-success progress-bar-striped active";

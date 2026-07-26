@@ -22,12 +22,14 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
     'compressor',
+    'corsheaders',
     'analytics',
     'api',
 ]
 
 MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -150,5 +152,11 @@ LOGGING = {
         'level': 'INFO',
     }
 }
+
+# The frontend runs on a separate origin/port from this API in dev (Docker
+# Compose splits them into two containers), so CORS must be enabled explicitly.
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
 
 reset_app_data()

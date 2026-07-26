@@ -1,7 +1,4 @@
-import { Component, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
-
-import { Modal } from 'angular2-modal';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { ActionsService } from './actions.service';
 
@@ -9,14 +6,11 @@ import { ActionsService } from './actions.service';
 @Component({
   selector: 'actions',
   templateUrl: 'app/actions/actions.component.html',
-  providers: [ActionsService, Modal, HTTP_PROVIDERS]
+  providers: [ActionsService]
 })
 
 export class ActionsComponent implements OnInit {
-  constructor(vcRef: ViewContainerRef,
-    public modal: Modal,
-    private actionsService: ActionsService) {
-    modal.defaultViewContainer = vcRef;
+  constructor(private actionsService: ActionsService) {
   };
 
   hostileResponses = {};

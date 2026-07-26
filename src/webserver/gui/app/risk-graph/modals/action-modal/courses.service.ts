@@ -1,41 +1,28 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod, URLSearchParams } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../../../environment/environment';
 import { Injectable } from '@angular/core';
-
-import 'rxjs/add/operator/map';
 
 
 @Injectable()
 export class ActionModalService  {
+  api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
 	};
 
   postEffects(systemId, task) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk_analysis/task_dependency/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(task)
+		return this.http.post<any>(this.api + '/risk_analysis/task_dependency/' + systemId + '/', JSON.stringify(task), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
 
   getTaskActions(force, effect, actionType) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'application/action_list/type/' +
-      force + '/' + 
+		return this.http.get<any>(this.api + '/action_list/type/' +
+      force + '/' +
       effect.toUpperCase() + '/' +
       actionType.toLowerCase() + '/'
-		});
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+    );
   };
 
 };

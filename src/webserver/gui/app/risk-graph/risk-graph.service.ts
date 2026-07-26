@@ -1,211 +1,129 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod, URLSearchParams } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 import { environment } from '../environment/environment';
-import { Injectable, OnInit } from '@angular/core';
-
-import 'rxjs/add/operator/map';
+import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 @Injectable()
-export class RiskGraphService implements OnInit {
-  api:string = "/api/v" + environment.API_VERSION;
+export class RiskGraphService {
+  api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
+  // Populated by getC2REST(); base URL for the external C2 REST API.
+  C2REST: string = environment.C2_REST_API;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
 	};
 
+  // Config for the external C2 REST API this app integrates with.
+  getC2REST() {
+    return of({ c2_rest_api: environment.C2_REST_API });
+  };
+
   getMissionTimeAssessment(systemId, missionTaskData) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: this.api + '/system/mission_time/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(missionTaskData)
+		return this.http.post<any>(this.api + '/system/mission_time/' + systemId + '/', JSON.stringify(missionTaskData), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
   getEstimatedTime(systemId, task) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: this.api + '/actions/estimated_time/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(task)
+		return this.http.post<any>(this.api + '/actions/estimated_time/' + systemId + '/', JSON.stringify(task), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
   // GET Unit list
   getMissionUnits() {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: this.C2REST + 'entity/Unit'
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(this.C2REST + 'entity/Unit');
   };
 
   // GET Mission data
   getAllMissions() {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: this.api + '/missions/'
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(this.api + '/missions/');
   };
 
   getMissionData(missionId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: this.api + '/missions/' + missionId
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+    return this.http.get<any>(this.api + '/missions/' + missionId);
   };
 
   // POST Task
   postTask(missionId, coaId, task) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task',
-      headers: headers,
-      body: JSON.stringify(task)
-		});
-
-    return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+    return this.http.post<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task', JSON.stringify(task), {
+			headers: { 'Content-Type': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				};
 			};
-		});
+		}));
   };
 
   // DELETE Task
   deleteTask(missionId, coaId, taskId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Delete,
-      url: this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task/' + taskId
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.delete<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId + '/task/' + taskId, {
+      observe: 'response'
+    }).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				};
 			};
-		});
+		}));
   };
 
   // Create new COA
   postCOA(missionId, name) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: this.C2REST + 'coa/mission/' + missionId + '/coa/' + name
-		});
-    return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+    return this.http.post<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + name, null, {
+      observe: 'response'
+    }).pipe(map((res) => {
 			if (res) {
 				return {status: res.status};
 			};
-		});
+		}));
   };
 
   // DELETE COA
   deleteCOA(missionId, coaId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Delete,
-      url: this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId
-    });
-
-    return this.http.request(new Request(requestoptions))
-    .map((res: Response) => {
+    return this.http.delete<any>(this.C2REST + 'coa/mission/' + missionId + '/coa/' + coaId, {
+      observe: 'response'
+    }).pipe(map((res) => {
       if (res) {
         return {status: res.status}
 			};
-		});
+		}));
   };
 
   postSystemRiskAnalysis(systemId) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk_analysis/system/' + systemId + '/'
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.post<any>(this.api + '/risk_analysis/system/' + systemId + '/', null);
   };
 
   postNewSystem(systemId, taskList) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/system/task_update/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(taskList)
+		return this.http.post<any>(environment.API_BASE_URL + '/application/system/task_update/' + systemId + '/', JSON.stringify(taskList), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
   postEffects(systemId, effectList) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk_analysis/task_dependency/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(effectList)
+		return this.http.post<any>(this.api + '/risk_analysis/task_dependency/' + systemId + '/', JSON.stringify(effectList), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
   compareCOAs(systemId, coAs) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk_analysis/compare_system/' + systemId + '/',
-      headers: headers,
-      body: JSON.stringify(coAs)
+		return this.http.post<any>(this.api + '/risk_analysis/compare_system/' + systemId + '/', JSON.stringify(coAs), {
+			headers: { 'Content-Type': 'application/json' }
 		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
   };
 
   // GET System data
   getSystemData(systemId) {
-    var requestoptions = new RequestOptions({
-      method: RequestMethod.Get,
-      url: this.api + '/cvi/' + systemId
-    });
+    return this.http.get<any>(this.api + '/cvi/' + systemId);
+  };
 
-    return this.http.request(new Request(requestoptions))
-    .map(res => res.json());
+  // GET all currently staged actions
+  getStagedActions() {
+    return this.http.get<any>(this.api + '/action_instances/');
   };
 
 };

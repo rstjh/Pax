@@ -1,36 +1,28 @@
 import { Component } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
 
-import { DialogRef, ModalComponent } from 'angular2-modal';
-import { BSModalContext } from 'angular2-modal/plugins/bootstrap';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 
 
-export class ThreatInfoWindowData extends BSModalContext {
-  constructor(public threatInfoData: {}) {
-    super();
-  }
+export class ThreatInfoWindowData {
+  constructor(public threatInfoData: {}) {}
 }
 
 
 @Component({
   selector: 'modal-content',
   templateUrl: './app/risk-graph/modals/threat-info/threat.info.modal.html',
-  providers: [HTTP_PROVIDERS]
+  providers: []
 })
 
 
-export class ThreatInfoWindow implements ModalComponent<ThreatInfoWindowData> {
-  context : ThreatInfoWindowData;
-
+export class ThreatInfoWindow {
   threatInfoData : any;
 
-  constructor(public dialog: DialogRef<ThreatInfoWindowData>) {
-    dialog.context.size = 'lg';
-    this.threatInfoData = dialog.context['threatInfoData'];
+  constructor(public dialog: BsModalRef) {
   };
 
   closeModal() {
-    this.dialog.close();
+    this.dialog.hide();
   };
 }

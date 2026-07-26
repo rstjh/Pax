@@ -5,6 +5,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from api.views.action_instances import ActionInstancesView
+from api.views.action_list import ActionListForceDetail, ActionListForceEffectDetail
 from api.views.action_templates import ActionTemplatesView
 from api.views.courses_of_action import GenerateCoursesOfAction
 from api.views.cvi_systems import CVIView, CVISystemView
@@ -65,6 +66,15 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/v{}/action_instances/$'.format(
         api_config.API_VERSION),
         ActionInstancesView.as_view()),
+
+    # Action list
+    url(r'^api/v{}/action_list/all/(?P<force>.+)/$'.format(
+        api_config.API_VERSION),
+        ActionListForceDetail.as_view()),
+
+    url(r'^api/v{}/action_list/type/(?P<force>.+)/(?P<effect>.+)/(?P<type>.+)/$'.format(
+        api_config.API_VERSION),
+        ActionListForceEffectDetail.as_view()),
 
     # Course of action
     url(r'api/v{}/course_of_action/generate/$'.format(

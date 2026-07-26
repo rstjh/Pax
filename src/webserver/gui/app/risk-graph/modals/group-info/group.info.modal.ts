@@ -1,32 +1,26 @@
-import { Component, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { Modal } from 'angular2-modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
-import { DialogRef, ModalComponent } from 'angular2-modal';
-import { BSModalContext } from 'angular2-modal/plugins/bootstrap';
-
-import { ActionWindow, ActionWindowData } from '../../../courses/modals/action-modal/courses.action.modal';
+import { ActionWindow, ActionWindowData } from '../action-modal/courses.action.modal';
 
 import { AssetInfoService } from '../asset-info/asset.info.modal.service';
 
 
 
-export class GroupInfoWindowData extends BSModalContext {
-  constructor(public groupInfoData : {}) {
-    super();
-  }
+export class GroupInfoWindowData {
+  constructor(public groupInfoData : {}) {}
 }
 
 
 @Component({
   selector: 'modal-content',
   templateUrl: './app/risk-graph/modals/group-info/group.info.modal.html',
-  providers: [AssetInfoService, Modal, HTTP_PROVIDERS]
+  providers: [AssetInfoService]
 })
 
 
-export class GroupInfoWindow implements OnInit, ModalComponent<GroupInfoWindowData> {
+export class GroupInfoWindow implements OnInit {
   context : GroupInfoWindowData;
 
   groupInfoData : any;
@@ -64,19 +58,17 @@ export class GroupInfoWindow implements OnInit, ModalComponent<GroupInfoWindowDa
     'likelihood': 8
   };
 
-  constructor(public dialog: DialogRef<GroupInfoWindowData>, vcRef: ViewContainerRef, public modal: Modal, private assetInfoService: AssetInfoService) {
-    modal.defaultViewContainer = vcRef;
-    dialog.context.size = 'lg';
-    this.groupInfoData = dialog['context']['groupInfoData'];
+  constructor(public dialog: BsModalRef, private modal: BsModalService, private assetInfoService: AssetInfoService) {
+  };
+
+  ngOnInit() {
     this.groupName = this.groupInfoData[0]['group'];
     this.groupFunction = this.groupInfoData[0]['function'];
 
     this.impactInfo['confidentiality'] = this.groupInfoData[0]['confidentiality']
     this.impactInfo['integrity'] = this.groupInfoData[0]['integrity']
     this.impactInfo['availability'] = this.groupInfoData[0]['availability']
-  };
 
-  ngOnInit() {
     this.groupView();
   };
 
@@ -205,10 +197,13 @@ export class GroupInfoWindow implements OnInit, ModalComponent<GroupInfoWindowDa
   };
 
   onClickActionTable(event) {
-    return this.modal.open(ActionWindow, new ActionWindowData(event.row, this.riskImpact));
+    // Pre-existing bug (not introduced by the Angular migration): ActionWindowData
+    // requires systemId/objectiveData/actorData/parentTasks, none of which this
+    // component has available. Left broken at the user's direction.
+    return this.modal.show(ActionWindow, { initialState: new (ActionWindowData as any)(event.row, this.riskImpact), class: 'modal-lg' });
   };
 
   closeModal() {
-    this.dialog.close();
+    this.dialog.hide();
   };
 }

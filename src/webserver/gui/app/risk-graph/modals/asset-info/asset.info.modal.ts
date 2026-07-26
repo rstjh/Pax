@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 declare let d3, nv: any;
-import { nvD3 } from 'ng2-nvd3';
-import { Modal } from 'angular2-modal';
 
-import * as L from 'leaflet';
+import * as Lns from 'leaflet';
+// SystemJS wraps this CJS module's exports under Lns.default rather than
+// exposing them directly on the namespace object; unwrap it here.
+const L = ((Lns as any).default || Lns) as typeof Lns;
 
-import { DialogRef, ModalComponent } from 'angular2-modal';
-import { BSModalContext } from 'angular2-modal/plugins/bootstrap';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ActionWindow, ActionWindowData } from '../action-modal/courses.action.modal';
 
@@ -17,29 +16,26 @@ import { RiskGraphService } from '../../risk-graph.service';
 
 
 
-export class AssetInfoWindowData extends BSModalContext {
+export class AssetInfoWindowData {
   constructor(
     public assetInfoData:object,
     public riskInfo:object,
     public systemId:string,
     public systemData:object,
     public missionData:object
-  ) {
-    super();
-  }
+  ) {}
 }
 
 
 @Component({
   selector: 'modal-content',
   templateUrl: './app/risk-graph/modals/asset-info/asset.info.modal.html',
-  directives: [nvD3],
-  providers: [AssetInfoService, RiskGraphService, Modal, HTTP_PROVIDERS]
+  providers: [AssetInfoService, RiskGraphService]
 })
 
 
-export class AssetInfoWindow implements OnInit, ModalComponent<AssetInfoWindowData> {
-  layers = [
+export class AssetInfoWindow implements OnInit {
+  layers: L.Layer[] = [
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '' })
   ];
   zoom = 16;
@@ -175,22 +171,14 @@ export class AssetInfoWindow implements OnInit, ModalComponent<AssetInfoWindowDa
   endTime:number = 0;
   selectedDescription:string = "";
 
-  constructor(public dialog: DialogRef<AssetInfoWindowData>,
-    vcRef: ViewContainerRef,
-    public modal: Modal,
+  constructor(public dialog: BsModalRef,
     private assetInfoService: AssetInfoService,
     private riskGraphService: RiskGraphService
   ) {
-    modal.defaultViewContainer = vcRef;
-    dialog['context']['size'] = 'lg';
-    this.assetInfoData = this.checkForUnknowns(dialog['context']['assetInfoData']);
-    this.systemData = dialog['context']['systemData'];
-    this.missionData = dialog['context']['missionData'];
-    this.riskInfo = dialog['context']['riskInfo'];
-    this.systemId = dialog['context']['systemId'];
   };
 
   ngOnInit() {
+    this.assetInfoData = this.checkForUnknowns(this.assetInfoData);
     this.riskGraphService.getC2REST()
     .subscribe(C2REST => {
       this.riskGraphService.C2REST = "http://" + C2REST["c2_rest_api"];
@@ -525,6 +513,6 @@ export class AssetInfoWindow implements OnInit, ModalComponent<AssetInfoWindowDa
   };
 
   closeModal() {
-    this.dialog.close();
+    this.dialog.hide();
   };
 }

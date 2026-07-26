@@ -19,14 +19,22 @@
     '@angular': 'app/node_modules/@angular',
     'angular2-in-memory-web-api': 'app/node_modules/angular2-in-memory-web-api',
     'rxjs': 'app/node_modules/rxjs',
+    'rxjs-compat': 'app/node_modules/rxjs-compat',
     'ng2-charts': 'app/node_modules/ng2-charts/bundles/ng2-charts.umd.js',
+    'chart.js': 'app/node_modules/chart.js/dist/Chart.js',
+    'lodash': 'app/node_modules/lodash/lodash.js',
+    'moment': 'app/node_modules/moment/moment.js',
     'underscore': 'app/node_modules/underscore/underscore.js',
-    '@swimlane/ngx-datatable': 'app/node_modules/@swimlane/ngx-datatable/release/index.js',
+    '@swimlane/ngx-datatable': 'app/node_modules/@swimlane/ngx-datatable/bundles/swimlane-ngx-datatable.umd.js',
     'leaflet': 'app/node_modules/leaflet/dist',
-    '@asymmetrik/ngx-leaflet': 'app/node_modules/@asymmetrik/ngx-leaflet/src/leaflet/leaflet.module.js',
+    '@asymmetrik/ngx-leaflet': 'app/node_modules/@asymmetrik/ngx-leaflet/dist/bundles/ngx-leaflet.umd.js',
     '@asymmetrik/ngx-leaflet-draw': 'app/node_modules/@asymmetrik/ngx-leaflet-draw/src/leaflet-draw/leaflet-draw.module.js',
     'ng2-nvd3': 'app/node_modules/ng2-nvd3/build/lib',
     'angular2-modal': 'app/node_modules/angular2-modal',
+    'ngx-bootstrap/modal': 'app/node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js',
+    'ngx-bootstrap/component-loader': 'app/node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js',
+    'ngx-bootstrap/positioning': 'app/node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js',
+    'ngx-bootstrap/utils': 'app/node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js',
     'ngx-popover': 'app/node_modules/ngx-popover',
     'survey-angular': 'app/node_modules/survey-angular',
     'ng2-file-upload': 'app/node_modules/ng2-file-upload'
@@ -39,6 +47,19 @@
       defaultExtension: 'js'
     },
     'rxjs' : {
+      main: 'index.js',
+      defaultExtension: 'js'
+    },
+    'rxjs-compat' : {
+      main: 'index.js',
+      defaultExtension: 'js'
+    },
+    'rxjs/operators' : {
+      main: 'index.js',
+      defaultExtension: 'js'
+    },
+    'rxjs/internal-compatibility' : {
+      main: 'index.js',
       defaultExtension: 'js'
     },
     'angular2-in-memory-web-api' : {
@@ -63,7 +84,7 @@
       defaultExtension: "js"
     },
     'angular2-modal' : {
-      main: 'bundles/angular2-modal.umd',
+      main: 'bundle/angular2-modal.rollup.umd',
       defaultExtension: 'js'
     },
     'ngx-popover': {
@@ -81,6 +102,7 @@
   };
 
   var ngPackageNames = [
+    'animations',
     'common',
     'compiler',
     'core',
@@ -94,8 +116,8 @@
   ];
 
   // UMD bundles
-  map[`angular2-modal/plugins/${plugin}`] = map['angular2-modal'] + '/bundles';
-  packages[`angular2-modal/plugins/${plugin}`] =  { defaultExtension: 'js', main: `angular2-modal.${plugin}.umd` };
+  map[`angular2-modal/plugins/${plugin}`] = map['angular2-modal'] + `/plugins/${plugin}/bundle`;
+  packages[`angular2-modal/plugins/${plugin}`] =  { defaultExtension: 'js', main: `angular2-modal-${plugin}.rollup.umd` };
 
   // Individual files (~300 requests):
   ngPackageNames.forEach(function (pkgName) {
@@ -116,6 +138,10 @@
 
   // Add package entries for angular packages
   ngPackageNames.forEach(setPackageConfig);
+
+  // HttpClient lives under the @angular/common/http sub-path, which needs its
+  // own entry distinct from plain @angular/common.
+  packages['@angular/common/http'] = { main: '../bundles/common-http.umd.js', defaultExtension: 'js' };
 
   var config = {
     map: map,

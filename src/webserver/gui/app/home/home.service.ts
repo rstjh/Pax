@@ -1,141 +1,82 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../environment/environment';
 import { Injectable } from '@angular/core';
-
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
 
 @Injectable()
 export class HomeService  {
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
 	};
 
   // CHECK DATA
   checkData(url) {
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: url
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.get<any>(url);
   };
 
   // GET
   getNetworkData() {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'app/home/data/network.data.json'
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.get<any>('app/home/data/network.data.json');
   };
 
   getRiskAppetiteData() {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'app/home/data/risk.appetite.data.json'
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.get<any>('app/home/data/risk.appetite.data.json');
   };
 
   getThreatActions() {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: 'app/home/data/threat-data/threat.actions.data.json'
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.get<any>('app/home/data/threat-data/threat.actions.data.json');
   };
 
   getThreatActorData(threatActor) {
     var threatDataURL = 'app/home/data/threat-data/threat-actor/' + threatActor + '.threat.data.json';
 
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Get,
-			url: threatDataURL
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map(res => res.json());
+		return this.http.get<any>(threatDataURL);
   };
 
 
   // POST
   postNetworkData(networkData) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/network/',
-			headers: headers,
-			body: JSON.stringify(networkData)
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+		return this.http.post<any>(environment.API_BASE_URL + '/application/network/', JSON.stringify(networkData), {
+			headers: { 'Content-Type': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				}
 			}
-		});
+		}));
   };
 
   postRiskAppetiteData(riskAppetiteData) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk_appetite/',
-			headers: headers,
-			body: JSON.stringify(riskAppetiteData)
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+		return this.http.post<any>(environment.API_BASE_URL + '/application/risk_appetite/', JSON.stringify(riskAppetiteData), {
+			headers: { 'Content-Type': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				}
 			}
-		});
+		}));
   };
 
   postThreatData(threatData) {
-    var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/threats/',
-			headers: headers,
-			body: JSON.stringify(threatData)
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+		return this.http.post<any>(environment.API_BASE_URL + '/application/threats/', JSON.stringify(threatData), {
+			headers: { 'Content-Type': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
           status: res.status
 				}
 			}
-		});
+		}));
   };
 
   // DELETE
   dropData(url) {
-    var requestoptions = new RequestOptions({
-			method: RequestMethod.Delete,
-			url: url
-		});
-
-		return this.http.request(new Request(requestoptions))
+		return this.http.delete<any>(url);
   };
 }

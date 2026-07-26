@@ -1,7 +1,7 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../environment/environment';
 import { Injectable } from '@angular/core';
-
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
 
 @Injectable()
@@ -13,12 +13,11 @@ export class SurveyService {
 		riskAppetiteScore : 0
 	};
 
-	constructor(private _http: Http) {
+	constructor(private _http: HttpClient) {
 	}
 
 	getSurveyQuestions() {
-		return this._http.get('app/survey/data/survey.questions.json')
-		.map(res => res.json());
+		return this._http.get<any>('app/survey/data/survey.questions.json');
   }
 
 	getRiskAppetiteData(riskAppetiteData) {
@@ -38,25 +37,16 @@ export class SurveyService {
 	};
 
 	postRiskAppetiteData(data) {
-		var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-		headers.append("Accept", 'application/json');
-
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/risk-appetite-data',
-			headers: headers,
-			body: JSON.stringify(data)
-		});
-
-		return this._http.request(new Request(requestoptions))
-		.map((res: Response) => {
+		return this._http.post<any>(environment.API_BASE_URL + '/application/risk-appetite-data', JSON.stringify(data), {
+			headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return {
 					       status: res.status,
-					       json: res.json()
+					       json: res.body
 							 }
 			}
-		});
+		}));
 	}
 }

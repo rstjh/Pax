@@ -47,7 +47,7 @@ class EffectsView(RetrieveUpdateDestroyAPIView):
 
     @swagger_auto_schema(manual_parameters=[EFFECT, EFFECT_TYPE, MONGO_ID])
     def get(self, request, *args, **kwargs):
-        query_params = dict(self.request.GET.iteritems())
+        query_params = dict(self.request.GET.items())
         if len(query_params) > 0:
             if '_id' in query_params.keys():
                 query_params['_id'] = ObjectId(query_params['_id'])

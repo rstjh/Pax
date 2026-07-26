@@ -1,7 +1,7 @@
-import { Http, Response, Request, Headers, RequestOptions, RequestMethod } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../environment/environment';
 import { Injectable } from '@angular/core';
-
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
 
 
@@ -11,22 +11,19 @@ export class CVIService {
     'current' : ''
   };
 
-	constructor(private http: Http) {
+	constructor(private http: HttpClient) {
 	};
 
 	getCVIQuestions() {
-		return this.http.get('app/cvi/data/cvi.questions.json')
-		.map(res => res.json());
+		return this.http.get<any>('app/cvi/data/cvi.questions.json');
   };
 
 	getCVIAnswers() {
-		return this.http.get('app/cvi/data/cvi.answers.json')
-		.map(res => res.json());
+		return this.http.get<any>('app/cvi/data/cvi.answers.json');
   };
 
 	getSampleCVIData() {
-		return this.http.get('app/cvi/data/c2-api-get-system-response.json')
-		.map(res => res.json());
+		return this.http.get<any>('app/cvi/data/c2-api-get-system-response.json');
   };
 
 	getCurrentSection(currentSection) {
@@ -34,22 +31,13 @@ export class CVIService {
 	};
 
 	postCVIData(data) {
-		var headers = new Headers();
-		headers.append("Content-Type", 'application/json');
-		headers.append("Accept", 'application/json');
-
-		var requestoptions = new RequestOptions({
-			method: RequestMethod.Post,
-			url: 'application/system/',
-			headers: headers,
-			body: JSON.stringify(data)
-		});
-
-		return this.http.request(new Request(requestoptions))
-		.map((res: Response) => {
+		return this.http.post<any>(environment.API_BASE_URL + '/application/system/', JSON.stringify(data), {
+			headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+			observe: 'response'
+		}).pipe(map((res) => {
 			if (res) {
 				return { status: res.status }
 			}
-		});
+		}));
 	}
 }

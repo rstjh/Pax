@@ -1,7 +1,9 @@
-import * as Survey from 'survey-angular';
+import * as SurveyNs from 'survey-angular';
+// SystemJS wraps this CJS module's exports under SurveyNs.default rather than
+// exposing them directly on the namespace object; unwrap it here.
+const Survey = ((SurveyNs as any).default || SurveyNs) as typeof SurveyNs;
 
 import { Component, OnInit, Injectable } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
 
 import { SurveyService } from './survey.service';
 
@@ -11,7 +13,7 @@ import 'rxjs/add/operator/map';
 @Component({
   selector:'Survey',
   templateUrl: 'app/survey/survey.component.html',
-  providers: [SurveyService, HTTP_PROVIDERS]
+  providers: [SurveyService]
 })
 
 @Injectable()
@@ -23,7 +25,7 @@ export class SurveyComponent implements OnInit  {
   };
 
   ngOnInit() {
-    Survey.Survey.cssType = "bootstrap";
+    Survey.StylesManager.applyTheme("bootstrap");
     Survey.defaultBootstrapCss.navigationButton = "btn btn-success";
     Survey.defaultBootstrapCss.matrixdynamic.button = "btn btn-default";
     Survey.defaultBootstrapCss.progressBar = "progress-bar progress-bar-success progress-bar-striped active";

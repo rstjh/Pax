@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HTTP_PROVIDERS } from "@angular/http";
 
 import { HomeService } from './home.service';
 
@@ -7,7 +6,7 @@ import { HomeService } from './home.service';
 @Component({
   selector: 'Home',
   templateUrl: "app/home/home.component.html",
-  providers: [HomeService, HTTP_PROVIDERS]
+  providers: [HomeService]
 })
 
 
