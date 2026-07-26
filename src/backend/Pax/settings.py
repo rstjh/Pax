@@ -43,7 +43,10 @@ ROOT_URLCONF = 'Pax.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'gui')],
+        # No project template directory: the GUI is a separate service and
+        # this one only renders templates that ship with installed apps
+        # (the admin, and drf-yasg's API documentation).
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

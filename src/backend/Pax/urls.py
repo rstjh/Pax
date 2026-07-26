@@ -1,5 +1,6 @@
 from Pax import api_config
 from django.conf.urls import url
+from django.views.generic.base import RedirectView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -15,7 +16,6 @@ from api.views.cvi_systems import CVIView, CVISystemView
 from api.views.effects import EffectsView
 from api.views.geolocation import AssetActorDistance
 from api.views.hostile_responses import HostileResponsesView, HostileResponseDetailView
-from api.views.index import IndexView
 from api.views.missions import MissionIdView, MissionsView
 from api.views.system import SystemMissionTime
 from api.views.units import UnitsView
@@ -169,11 +169,11 @@ urlpatterns = format_suffix_patterns([
         SchemaView.with_ui('redoc', cache_timeout=0),
         name='schema-redoc'),
 
-    # Angular
+    # This service is the API only; the GUI is served separately (port 3000 in
+    # the Docker Compose setup), so send visitors to the API documentation.
+    # There is deliberately no catch-all: an unmatched path should 404 rather
+    # than be swallowed by a single-page-app fallback.
     url(r'^$',
-        IndexView.as_view(),
+        RedirectView.as_view(url='/swagger/', permanent=False),
         name='index'),
-
-    url(r'^(?P<path>.*)/$',
-        IndexView.as_view()),
 ])
