@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class CVIService {
+	api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
+
 	section = {
     'current' : ''
   };
@@ -31,7 +33,7 @@ export class CVIService {
 	};
 
 	postCVIData(data) {
-		return this.http.post<any>(environment.API_BASE_URL + '/application/system/', JSON.stringify(data), {
+		return this.http.post<any>(this.api + '/cvi/', JSON.stringify(data), {
 			headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
 			observe: 'response'
 		}).pipe(map((res) => {

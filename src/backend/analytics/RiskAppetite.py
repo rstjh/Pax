@@ -48,15 +48,37 @@ class RiskAppetiteAnalysis:
         # Return weights for physical and cyber assets
         return [physicalAssetWeight, 1 - physicalAssetWeight]
 
+    # Questions scored into the risk appetite. Each is a matrix question with
+    # a physicalAssets and a cyberAssets row. Not every questionnaire asks all
+    # of them, so the score averages whichever are answered.
+    SCORED_QUESTIONS = (
+        'riskAssetImportance',
+        'currentSecurityRegimeImportance',
+        'impactDefenceEffort'
+    )
+
+    def _question_score(self, question):
+        answer = self.riskAppetiteData.get(question)
+        if not answer:
+            return None
+        if 'cyberAssets' not in answer or 'physicalAssets' not in answer:
+            return None
+        return (float(answer['cyberAssets']) +
+                float(answer['physicalAssets'])) / 10
+
     def generate_risk_appetite_score(self):
-        # Analyse mission risk
-        missionRisk = (float(self.riskAppetiteData['riskAssetImportance']['cyberAssets']) + float(self.riskAppetiteData['riskAssetImportance']['physicalAssets'])) / 10
+        riskAppetiteItems = [
+            score for score in (
+                self._question_score(question)
+                for question in self.SCORED_QUESTIONS
+            ) if score is not None
+        ]
 
-        # Analyse current security regime
-        securityRegime = (float(self.riskAppetiteData['currentSecurityRegimeImportance']['cyberAssets']) + float(self.riskAppetiteData['currentSecurityRegimeImportance']['physicalAssets'])) / 10
-        defenceEffort = (float(self.riskAppetiteData['impactDefenceEffort']['cyberAssets']) + float(self.riskAppetiteData['impactDefenceEffort']['physicalAssets'])) / 10
+        if not riskAppetiteItems:
+            raise ValueError(
+                "Risk appetite data answered none of: {}".format(
+                    ', '.join(self.SCORED_QUESTIONS)))
 
-        riskAppetiteItems = [missionRisk, securityRegime, defenceEffort]
         riskAppetiteScore = np.mean(riskAppetiteItems) * 100
 
         return int(riskAppetiteScore)

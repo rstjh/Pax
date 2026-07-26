@@ -61,7 +61,12 @@ def threat_label_level_map(threat_label=None, threat_level=None):
         'severe': 4,
         'substantial': 3,
         'moderate': 2,
-        'no': 1
+        # 'no' is the historical name for the lowest level; 'low' and
+        # 'negligible' are the equivalents offered by the CVI questionnaire.
+        'no': 1,
+        'low': 1,
+        'negligible': 0,
+        'none': 1
     }
     if threat_label is not None:
         threat_label_lower = threat_label.lower()

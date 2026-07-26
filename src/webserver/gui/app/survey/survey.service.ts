@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SurveyService {
+	api:string = environment.API_BASE_URL + "/api/v" + environment.API_VERSION;
+
 	riskAppetite = {
 		class : "",
 		completed : false,
@@ -25,11 +27,12 @@ export class SurveyService {
 		this.riskAppetite.riskAppetiteScore = riskAppetiteData.riskAppetiteScore;
 		this.riskAppetite.completed = true;
 
-		if (riskAppetiteData.riskAppetiteLabel == "Very High") {
+		// Labels come from RiskAppetiteAnalysis.generate_risk_appetite_label.
+		if (riskAppetiteData.riskAppetiteLabel == "Very risk loving") {
 			this.riskAppetite.class = "label label-danger";
-		} else if (riskAppetiteData.riskAppetiteLabel == "High") {
+		} else if (riskAppetiteData.riskAppetiteLabel == "Risk loving") {
 			this.riskAppetite.class = "label label-warning";
-		} else if (riskAppetiteData.riskAppetiteLabel == "Neutral") {
+		} else if (riskAppetiteData.riskAppetiteLabel == "Risk neutral") {
 			this.riskAppetite.class = "label label-success";
 		} else {
 			this.riskAppetite.class = "label label-info";
@@ -37,7 +40,7 @@ export class SurveyService {
 	};
 
 	postRiskAppetiteData(data) {
-		return this._http.post<any>(environment.API_BASE_URL + '/application/risk-appetite-data', JSON.stringify(data), {
+		return this._http.post<any>(this.api + '/risk_appetite/', JSON.stringify(data), {
 			headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
 			observe: 'response'
 		}).pipe(map((res) => {

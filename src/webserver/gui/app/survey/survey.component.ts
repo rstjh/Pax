@@ -38,11 +38,14 @@ export class SurveyComponent implements OnInit  {
       var surveyServicePass = this.surveyService;
       var survey = new Survey.Model(surveyJSON);
 
-      var surveySendResult = function(surveyResults, surveyService = surveyServicePass) {
-        surveyService.postRiskAppetiteData(surveyResults.data)
+      // SurveyJS invokes onComplete as (sender, options), so the service must
+      // come from the closure: a second parameter with a default value would
+      // be overwritten by the options argument.
+      var surveySendResult = function(surveyResults) {
+        surveyServicePass.postRiskAppetiteData(surveyResults.data)
         .subscribe(postResponse => {
           var riskAppetiteResponse = postResponse.json
-          surveyService.getRiskAppetiteData(riskAppetiteResponse)
+          surveyServicePass.getRiskAppetiteData(riskAppetiteResponse)
         });
       };
 

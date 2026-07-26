@@ -5,12 +5,15 @@ ASSET_TYPES = (
     "physical", "cyber", "unit"
 )
 
+# The full vocabulary offered by the CVI questionnaire and understood by
+# analytics.Config.threat_label_level_map.
 THREAT_LEVELS = (
-    "NONE", "LOW", "MODERATE", "SEVERE"
+    "NEGLIGIBLE", "NONE", "NO", "LOW", "MODERATE",
+    "SUBSTANTIAL", "SEVERE", "HIGH", "CRITICAL"
 )
 
 THREAT_TYPES = (
-    "hacker", "terrorist"
+    "hacker", "terrorist", "insider", "foreign intelligence service"
 )
 
 
@@ -36,9 +39,11 @@ class VulnerabilitiesModel(serializers.Serializer):
     assets = serializers.ListField(required=True)
     name = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
-    type = serializers.ChoiceField(
-        choices=ASSET_TYPES,
-        required=True)
+    # Free text rather than a choice: the CVI questionnaire does not ask for a
+    # vulnerability type at all, and the rest of the codebase uses it as a
+    # remediation category ('Patch', 'Physical' in analytics/Actions.py) rather
+    # than an asset type.
+    type = serializers.CharField(required=False)
 
 
 class ThreatsModel(serializers.Serializer):

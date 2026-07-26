@@ -16,7 +16,7 @@ from api.views.missions import MissionIdView, MissionsView
 from api.views.system import SystemMissionTime
 from api.views.units import UnitsView
 from api.views.reset import ResetData
-from api.views.risk_appetite import RiskAppetiteDetail
+from api.views.risk_appetite import RiskAppetiteDetail, RiskAppetiteView
 from api.views.risk import NetworkRiskAnalysis, SystemRiskAnalysis, \
     CompareSystemRiskAnalysis, TaskDependencyRiskAnalysis
 
@@ -64,6 +64,10 @@ urlpatterns = format_suffix_patterns([
         HostileResponseDetailView.as_view()),
 
     # Risk appetite
+    url(r'^api/v{}/risk_appetite/$'.format(
+        api_config.API_VERSION),
+        RiskAppetiteView.as_view()),
+
     url(r'^api/v{}/risk_appetite/(?P<missionId>.+)/$'.format(
         api_config.API_VERSION),
         RiskAppetiteDetail.as_view()),

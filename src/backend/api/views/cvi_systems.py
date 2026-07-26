@@ -7,6 +7,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from drf_yasg.utils import swagger_auto_schema
 
 from api.models.cvi_systems import CVISystemModel
+from api.services.cvi_normalisation import normalise_cvi_system
 
 
 class CVIView(ListCreateAPIView):
@@ -28,12 +29,34 @@ class CVIView(ListCreateAPIView):
             data=cvi_systems_list,
             status=200)
 
+    # Fields the CVI questionnaire has no pages for. If it is updating a system
+    # that already has them, they must be carried over rather than reset to
+    # empty defaults.
+    PRESERVED_FIELDS = ('geolocation', 'networks')
+
     @swagger_auto_schema(responses={201: "Created"})
     def post(self, request, *args, **kwargs):
+        unanswered = [field for field in self.PRESERVED_FIELDS
+                      if not request.data.get(field)]
+        system_data = normalise_cvi_system(request.data)
+
+        if unanswered:
+            existing = self.cvi_collection.find_one(
+                {'id': system_data['id']},
+                {'_id': 0}) or {}
+            for field in unanswered:
+                if existing.get(field):
+                    system_data[field] = existing[field]
+
         CVISystemModel(
-            data=request.data).is_valid(
+            data=system_data).is_valid(
             raise_exception=True)
-        self.cvi_collection.insert(request.data)
+        # Keyed on the system id so re-submitting the questionnaire for a
+        # system updates it rather than accumulating duplicates.
+        self.cvi_collection.replace_one(
+            {'id': system_data['id']},
+            system_data,
+            upsert=True)
         return Response(status=201)
 
 
