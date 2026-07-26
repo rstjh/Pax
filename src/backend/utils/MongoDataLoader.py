@@ -2,6 +2,8 @@ import json
 import pymongo as pm
 
 from utils.data.EffectData import default_effects
+from utils.data.HostileResponseData import default_hostile_responses
+from utils.data.ActionListData import default_action_list
 from utils.data.ActionTemplateData import default_action_templates
 from utils.data.CVISystemData import default_cvi_systems
 from utils.data.NetworkData import default_device_network
@@ -20,6 +22,8 @@ CLIENT = pm.MongoClient(
 def reset_app_data():
     coll_data = {
         'effects': default_effects,
+        'hostile_response': default_hostile_responses,
+        'action_list': default_action_list,
         'actionTemplates': default_action_templates,
         'cviSystems': default_cvi_systems,
         'deviceNetwork': default_device_network,

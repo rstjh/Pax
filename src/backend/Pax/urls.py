@@ -10,6 +10,7 @@ from api.views.action_templates import ActionTemplatesView
 from api.views.courses_of_action import GenerateCoursesOfAction
 from api.views.cvi_systems import CVIView, CVISystemView
 from api.views.effects import EffectsView
+from api.views.hostile_responses import HostileResponsesView, HostileResponseDetailView
 from api.views.index import IndexView
 from api.views.missions import MissionIdView, MissionsView
 from api.views.system import SystemMissionTime
@@ -51,6 +52,15 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/v{}/effects/$'.format(
         api_config.API_VERSION),
         EffectsView.as_view()),
+
+    # Hostile responses
+    url(r'^api/v{}/hostile_response/$'.format(
+        api_config.API_VERSION),
+        HostileResponsesView.as_view()),
+
+    url(r'^api/v{}/hostile_response/(?P<effect>[^/]+)/$'.format(
+        api_config.API_VERSION),
+        HostileResponseDetailView.as_view()),
 
     # Risk appetite
     url(r'^api/v{}/risk_appetite/(?P<missionId>.+)/$'.format(

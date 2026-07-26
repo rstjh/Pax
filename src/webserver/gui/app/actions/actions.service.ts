@@ -11,7 +11,7 @@ export class ActionsService  {
   };
 
   deleteEffect(effect) {
-    return this.http.delete<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect + '/', {
+    return this.http.delete<any>(this.api + '/hostile_response/' + effect + '/', {
       observe: 'response'
     }).pipe(map((res) => {
       if (res) {
@@ -23,11 +23,11 @@ export class ActionsService  {
   };
 
   getHostileResponses(effect) {
-    return this.http.get<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect);
+    return this.http.get<any>(this.api + '/hostile_response/' + effect + '/');
   };
 
   patchHostileResponse(effect, hostileResponse) {
-    return this.http.patch<any>(environment.API_BASE_URL + '/application/hostile_response/' + effect + '/', JSON.stringify(hostileResponse), {
+    return this.http.patch<any>(this.api + '/hostile_response/' + effect + '/', JSON.stringify(hostileResponse), {
       headers: { 'Content-Type': 'application/json' },
       observe: 'response'
     }).pipe(map((res) => {
@@ -40,7 +40,7 @@ export class ActionsService  {
   };
 
   submitNewEffect(data) {
-    return this.http.post<any>(environment.API_BASE_URL + '/application/hostile_response/', JSON.stringify(data), {
+    return this.http.post<any>(this.api + '/hostile_response/', JSON.stringify(data), {
       headers: { 'Content-Type': 'application/json' },
       observe: 'response'
     }).pipe(map((res) => {
@@ -50,8 +50,13 @@ export class ActionsService  {
     }));
   };
 
+  // The Actions page works with effect names; source them from the
+  // hostile_response collection so effects added or removed through this
+  // page stay in sync with the list.
   getEffects() {
-    return this.http.get<any>(this.api + '/effects/');
+    return this.http.get<any>(this.api + '/hostile_response/').pipe(
+      map((responses) => responses.map((r) => r['effect']))
+    );
   };
 
   getEffectTypes() {
@@ -59,7 +64,7 @@ export class ActionsService  {
   };
 
   getActionData(force="hostile") {
-    return this.http.get<any>(this.api + '/action_list/all/' + force);
+    return this.http.get<any>(this.api + '/action_list/all/' + force + '/');
   };
 
   patchActionData(actions, force, effect, type) {
