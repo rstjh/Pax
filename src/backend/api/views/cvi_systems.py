@@ -45,7 +45,7 @@ class CVISystemView(RetrieveUpdateDestroyAPIView):
         self.cvi_collection = pm.MongoClient(
             host=os.environ.get('DB_HOSTNAME'),
             port=int(os.environ.get('DB_PORT'))
-        )[os.environ.get('DB_NAME')]['cviSystem']
+        )[os.environ.get('DB_NAME')]['cviSystems']
 
     @swagger_auto_schema(responses={200: "OK"})
     def get(self, request, *args, **kwargs):

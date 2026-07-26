@@ -66,18 +66,22 @@ class SystemRiskAnalysis(C2DataRequestor):
 
     @swagger_auto_schema(responses={200: AssetRiskResult})
     def post(self, request, *args, **kwargs):
+        action_data = request.data
         if isinstance(request.data, dict):
-            request.data = list(request.data)
+            action_data = list(request.data)
 
         TasksModel(
-            data=request.data,
+            data=action_data,
             many=True).is_valid(
             raise_exception=True)
 
+        return self.fetch_c2_data(action_data, self.kwargs['systemId'])
+
+    def status_200(self, system_id, action_data, system_data):
         asset_risk = perform_system_risk_analysis(
-            system_id=self.kwargs['systemId'],
+            system_id=system_id,
             system_data=system_data,
-            action_data=request.data
+            action_data=action_data
         )
         system_analysis = {
             "assetRisk": asset_risk

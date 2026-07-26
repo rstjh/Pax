@@ -31,8 +31,12 @@ export class RiskGraphService {
 		});
   };
 
-  // GET Unit list
+  // GET Unit list. Falls back to Pax's own seeded units when no external C2
+  // is configured, so the risk graph still loads standalone.
   getMissionUnits() {
+    if (!this.C2REST) {
+      return this.http.get<any>(this.api + '/units/');
+    }
     return this.http.get<any>(this.C2REST + 'entity/Unit');
   };
 
@@ -42,7 +46,11 @@ export class RiskGraphService {
   };
 
   getMissionData(missionId) {
-    return this.http.get<any>(this.api + '/missions/' + missionId);
+    return this.http.get<any>(this.api + '/missions/' + missionId).pipe(
+      // The API returns a single-element list; callers expect the mission
+      // object itself (the shape the C2 API returns).
+      map((missions) => Array.isArray(missions) ? missions[0] : missions)
+    );
   };
 
   // POST Task
@@ -118,7 +126,11 @@ export class RiskGraphService {
 
   // GET System data
   getSystemData(systemId) {
-    return this.http.get<any>(this.api + '/cvi/' + systemId);
+    return this.http.get<any>(this.api + '/cvi/' + systemId).pipe(
+      // The API returns a single-element list; callers expect the system
+      // object itself (the shape the C2 API returns).
+      map((systems) => Array.isArray(systems) ? systems[0] : systems)
+    );
   };
 
   // GET all currently staged actions

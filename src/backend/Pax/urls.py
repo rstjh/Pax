@@ -14,6 +14,7 @@ from api.views.hostile_responses import HostileResponsesView, HostileResponseDet
 from api.views.index import IndexView
 from api.views.missions import MissionIdView, MissionsView
 from api.views.system import SystemMissionTime
+from api.views.units import UnitsView
 from api.views.reset import ResetData
 from api.views.risk_appetite import RiskAppetiteDetail
 from api.views.risk import NetworkRiskAnalysis, SystemRiskAnalysis, \
@@ -104,6 +105,11 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/v{}/cvi/(?P<systemId>.+)/'.format(
         api_config.API_VERSION),
         CVISystemView.as_view()),
+
+    # Units
+    url(r'^api/v{}/units/$'.format(
+        api_config.API_VERSION),
+        UnitsView.as_view()),
 
     # Mission
     url(r'^api/v{}/missions/'.format(

@@ -45,6 +45,7 @@ export class RiskGraphComponent implements OnInit {
 
   noData = 1;
   noDataLoaded = 1;
+  loadError = "";
 
   detailSection = 0;
   networkSection = 0;
@@ -883,10 +884,18 @@ constructor(private route: ActivatedRoute,
     populateActionTable(coa) {
       this.riskGraphService.getMissionData(this.missionData['id'])
       .subscribe(missionData => {
-        for (let i = 0; i < missionData['coAs'].length; i++) {
-          if (missionData['coAs'][i]['name'] == coa) {
-            var tasks = missionData['coAs'][i]['tasks'];
+        var coAs = missionData['coAs'] || [];
+        var tasks;
+        for (let i = 0; i < coAs.length; i++) {
+          if (coAs[i]['name'] == coa) {
+            tasks = coAs[i]['tasks'];
           };
+        };
+        // No course of action matched (e.g. no C2 supplying them), so there
+        // are no tasks to populate.
+        if (!tasks) {
+          this.actionRows = [];
+          return;
         };
         for (var i = 0; i < tasks.length; i++) {
           if (tasks[i]['name'] == "") {
@@ -1111,22 +1120,31 @@ constructor(private route: ActivatedRoute,
       .getMissionData(missionId)
       .subscribe(missionData => {
         this.missionData = missionData;
-        this.systemId = missionData[0]['systems'][0]['id'];
+        // C2 returns systems as objects; Pax's own seed data stores them as
+        // plain id strings.
+        var system = missionData['systems'][0];
+        this.systemId = (system && system['id']) ? system['id'] : system;
         this.riskGraphService
         .getSystemData(this.systemId)
         .subscribe(systemData => {
-          console.log(systemData);
           this.systemCoordinates = L.latLng(
-            systemData[0]['geolocation']['coordinates']['latitude'],
-            systemData[0]['geolocation']['coordinates']['longitude']);
-          this.systemData = systemData[0];
+            systemData['geolocation']['coordinates']['latitude'],
+            systemData['geolocation']['coordinates']['longitude']);
+          this.missionCoordinates = {
+            'latitude': systemData['geolocation']['coordinates']['latitude'],
+            'longitude': systemData['geolocation']['coordinates']['longitude']
+          };
+          this.systemData = systemData;
           this.numberOfAssets = this.systemData['assets'].length;
           this.numberOfThreats = this.systemData['threats'].length;
           this.numberOfVulnerabilities = this.systemData['vulnerabilities'].length;
           for (let i = 0; i < this.numberOfAssets; i++) {
-            if (this.systemData['assets'][i]['assetType']==='Physical') {
+            // Asset types are stored lower-case in Pax's own data and
+            // capitalised by the C2 API, so compare case-insensitively.
+            var assetType = (this.systemData['assets'][i]['assetType'] || '').toLowerCase();
+            if (assetType === 'physical') {
               this.numberOfPhysicalAssets += 1
-            } else if (this.systemData['assets'][i]['assetType']==='Cyber') {
+            } else if (assetType === 'cyber') {
               this.numberOfCyberAssets += 1
             };
           };
@@ -1136,7 +1154,8 @@ constructor(private route: ActivatedRoute,
             this.unitList = [];
             var availableUnits = this.getAvailableUnits(
               this.missionData['elements'],
-              this.missionData['warningOrder']['taskOrg']['units']
+              this.missionData['warningOrder'],
+              this.missionData['units']
             );
             for (let i = 0; i < unitList.length; i++) {
               for (let j = 0; j < availableUnits.length; j++) {
@@ -1149,10 +1168,12 @@ constructor(private route: ActivatedRoute,
                 };
               };
             };
-            this.selectedUnit = {
-              'name': this.unitList[0]['name'],
-              'id': this.unitList[0]['id'],
-              'affiliation': this.unitList[0]['affiliation']
+            if (this.unitList.length > 0) {
+              this.selectedUnit = {
+                'name': this.unitList[0]['name'],
+                'id': this.unitList[0]['id'],
+                'affiliation': this.unitList[0]['affiliation']
+              };
             };
           });
           this.riskGraphService.postSystemRiskAnalysis(this.systemId)
@@ -1171,15 +1192,34 @@ constructor(private route: ActivatedRoute,
             };
             this.navToDetailSection();
             this.loadingMission = false;
+          }, error => {
+            this.loadFailed('Risk analysis failed for system ' + this.systemId + '.');
           });
           this.getCOAList(this.missionData['id']);
+        }, error => {
+          this.loadFailed('Could not load system data for ' + this.systemId + '.');
         });
+      }, error => {
+        this.loadFailed('Could not load mission ' + missionId + '.');
       });
     };
 
-    getAvailableUnits(elements, taskOrgUnits) {
-      var units = taskOrgUnits;
-      for (let i = 0; i < elements.length; i++) {
+    // Clears the loading spinner and surfaces a reason, so a failed request
+    // never leaves the page spinning indefinitely.
+    loadFailed(message) {
+      this.loadingMission = false;
+      this.loadError = message;
+      this.noDataLoaded = 1;
+    };
+
+    // `elements` and `warningOrder` only exist on C2-supplied missions; Pax's
+    // own seed data just lists unit ids, so fall back to those.
+    getAvailableUnits(elements, warningOrder, missionUnits) {
+      var taskOrgUnits = (warningOrder && warningOrder['taskOrg'])
+        ? warningOrder['taskOrg']['units']
+        : missionUnits;
+      var units = (taskOrgUnits || []).slice();
+      for (let i = 0; i < (elements || []).length; i++) {
         if (elements[i]['entityType'] == 'unit') {
           units.push(elements[i]['entityId']);
         };
@@ -1229,7 +1269,9 @@ constructor(private route: ActivatedRoute,
       this.selectedRiskGraphCOA = this.riskGraphCOAs[0];
       this.riskGraphService.getMissionData(missionId)
       .subscribe( missionData => {
-        if (missionData['coAs'].length > 0) {
+        // Courses of action live in the external C2; a mission from Pax's own
+        // seed data has none.
+        if (missionData['coAs'] && missionData['coAs'].length > 0) {
           for (let i = 0; i < missionData['coAs'].length; i++) {
             this.riskGraphCOAs.push(missionData['coAs'][i]['name']);
             this.coursesOfAction.push(missionData['coAs'][i]['name']);
@@ -1240,7 +1282,13 @@ constructor(private route: ActivatedRoute,
             this.coursesOfAction = [
               'COA1'
             ];
+            this.selectCOA(this.coursesOfAction[0]);
+          }, error => {
+            // Courses of action are stored in the external C2; without one
+            // there is nothing to create or select.
+            this.coursesOfAction = [];
           });
+          return;
         };
         this.selectCOA(this.coursesOfAction[0]);
       });

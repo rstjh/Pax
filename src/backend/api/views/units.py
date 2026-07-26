@@ -22,23 +22,11 @@ class UnitsView(ListAPIView):
 
     @swagger_auto_schema(responses={200: "OK"})
     def get(self, request, *args, **kwargs):
-        units_list = list(self.units_collection.find())
+        units_list = list(self.units_collection.find({}, {'_id': 0}))
         return Response(
             data=units_list,
             status=200)
 
-
-def get_mission_units(mission_id):
-    missions_collection = pm.MongoClient(
-        host=os.environ.get('DB_HOSTNAME'),
-        port=int(os.environ.get('DB_PORT'))
-    )[os.environ.get('DB_NAME')]['missions']
-
-
-search_page_soup = BeautifulSoup(request_page.content, "lxml")
-k = search_page_soup.find_all("div", {"class": "item__body"})
-for l in k:
-    if 'rapid' in l.find("span", {"class": "meta__type"}).get_text().lower() or \
-                    'article' in l.find("span", {"class": "meta__type"}).get_text().lower():
-        print 'hi'
-
+    # Implement the get_queryset to stop warnings of schema generation
+    def get_queryset(self):
+        return None

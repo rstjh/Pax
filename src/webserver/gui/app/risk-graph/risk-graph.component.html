@@ -42,6 +42,7 @@
   <div *ngIf="noData==0">
   <!-- System selection -->
   <div class="container" *ngIf="noDataLoaded==1">
+    <div class="alert alert-danger" role="alert" *ngIf="loadError">{{loadError}}</div>
     <h4>Please select a system to analyse...</h4>
     <div class="col-sm-12" style="text-align:center;">
       <div *ngFor="let mission of allMissions" style="padding-top:20px; padding-bottom:15px;">
@@ -55,7 +56,7 @@
   <div class="container" *ngIf="loadingMission">
     <div style="text-align:center;">
       <br>
-      <h3>Loading system data for {{missionData['id']}}...</h3>
+      <h3>Loading system data for {{missionId}}...</h3>
       <i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>
     </div>
   </div>
