@@ -43,7 +43,7 @@ class VulnerabilitiesModel(serializers.Serializer):
     # vulnerability type at all, and the rest of the codebase uses it as a
     # remediation category ('Patch', 'Physical' in analytics/Actions.py) rather
     # than an asset type.
-    type = serializers.CharField(required=False)
+    type = serializers.CharField(required=False, allow_blank=True)
 
 
 class ThreatsModel(serializers.Serializer):
@@ -94,7 +94,7 @@ class FunctionsModel(serializers.Serializer):
     id = serializers.CharField(required=True)
     name = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
-    reference = serializers.CharField(required=False)
+    reference = serializers.CharField(required=False, allow_blank=True)
 
 
 class CVISystemModel(serializers.Serializer):

@@ -24,7 +24,9 @@ class TasksModel(serializers.Serializer):
     start = serializers.IntegerField(required=True)
     end = serializers.IntegerField(required=True)
     actionInstanceRefs = serializers.ListField(required=False)
-    description = serializers.CharField(required=False)
+    # The description is optional in the task form, so it arrives as an empty
+    # string when the planner leaves it blank.
+    description = serializers.CharField(required=False, allow_blank=True)
 
 
 class CourseOfActionModel(serializers.Serializer):
