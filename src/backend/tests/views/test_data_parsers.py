@@ -47,14 +47,26 @@ class TestAnalyticsDataParser(TestCase):
 
 
 def sort(data, sorted_data):
+    """Normalise a parser result in place so two runs compare equal.
 
+    The parser makes no ordering guarantees, so every list is sorted before
+    comparison. Lists of dictionaries have no natural ordering, so they are
+    sorted by a canonical JSON rendering of each element instead.
+    """
     for key, value in data.items():
+        sorted_data[key] = canonicalise(value)
 
-        sorted_data[key] = sorted(value)
-        for i in range(0, len(sorted_data[key])):
-            if isinstance(sorted_data[key][i], dict):
 
-                in_sort = {}
-                sort(sorted_data[key][i], in_sort)
+def canonicalise(value):
 
-                sorted_data[key][i] = in_sort
+    if isinstance(value, dict):
+        return {key: canonicalise(item) for key, item in value.items()}
+
+    if isinstance(value, list):
+        return sorted((canonicalise(item) for item in value), key=sort_key)
+
+    return value
+
+
+def sort_key(value):
+    return json.dumps(value, sort_keys=True, default=str)

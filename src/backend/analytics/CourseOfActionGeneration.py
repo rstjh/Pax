@@ -16,13 +16,17 @@ def generate_course_action_depth(root_task, tasks):
     return clean_data[::-1]
 
 
+def find_task(tasks, task_id):
+    return next(task for task in tasks if task["taskId"] == task_id)
+
+
 def process_task_list_breadth(tasks, current_list):
 
     process_list = []
 
     for element in current_list:
 
-        target_task = filter(lambda task: task["taskId"] == element, tasks)[0]["dependencies"]
+        target_task = find_task(tasks, element)["dependencies"]
         process_list += target_task
 
     if len(process_list) > 0:
@@ -38,7 +42,7 @@ def process_task_list_depth(tasks, current_list):
 
     for element in current_list:
 
-        target_task = filter(lambda task: task["taskId"] == element, tasks)[0]["dependencies"]
+        target_task = find_task(tasks, element)["dependencies"]
 
         for t in target_task:
 
@@ -54,7 +58,7 @@ def extract_tasks(task_list, tasks):
 
     for t in task_list:
 
-        export_list += filter(lambda task: task["taskId"] == t, tasks)
+        export_list += [task for task in tasks if task["taskId"] == t]
 
     return export_list
 

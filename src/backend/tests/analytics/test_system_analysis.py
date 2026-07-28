@@ -118,12 +118,18 @@ def mock_offensive_or_defensive(action):
     return actions[action]
 
 def mock_get_unit_data(unit_id):
+    # 'effectsCapability' is the numeric threat level Config.threat_label_level_map
+    # translates back into a label; 6 is 'critical'.
     unitdata = {
         "actor1": {
-            "name": "actor1_name"
+            "id": "actor1",
+            "name": "actor1_name",
+            "effectsCapability": 6
         },
         "actor2": {
-            "name": "actor2_name"
+            "id": "actor2",
+            "name": "actor2_name",
+            "effectsCapability": 6
         }
     }
 
@@ -249,13 +255,21 @@ class TestGetAssetCoordinates(TestCase):
                 },
                 {
                     "assetsThreatened": ["Object1"],
+                    "id": "actor1",
                     "name": "actor1_name",
-                    "threatLevel": "CRITICAL"
+                    "threatLevel": "CRITICAL",
+                    "purpose": "Unknown",
+                    "motivation": "Unknown",
+                    "intent": "Unknown"
                 },
                 {
                     "assetsThreatened": ["Object5"],
+                    "id": "actor2",
                     "name": "actor2_name",
-                    "threatLevel": "CRITICAL"
+                    "threatLevel": "CRITICAL",
+                    "purpose": "Unknown",
+                    "motivation": "Unknown",
+                    "intent": "Unknown"
                 }]
         }
 
@@ -304,13 +318,21 @@ class TestGetAssetCoordinates(TestCase):
             "threats": [
                 {
                     "assetsThreatened": ["Object1"],
+                    "id": "actor1",
                     "name": "actor1_name",
-                    "threatLevel": "CRITICAL"
+                    "threatLevel": "CRITICAL",
+                    "purpose": "Unknown",
+                    "motivation": "Unknown",
+                    "intent": "Unknown"
                 },
                 {
                     "assetsThreatened": ["Object5"],
+                    "id": "actor2",
                     "name": "actor2_name",
-                    "threatLevel": "CRITICAL"
+                    "threatLevel": "CRITICAL",
+                    "purpose": "Unknown",
+                    "motivation": "Unknown",
+                    "intent": "Unknown"
                 }]
         }
 
