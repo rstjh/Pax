@@ -62,6 +62,6 @@ class ActionListForceEffectDetail(ListAPIView, UpdateAPIView):
         type = self.kwargs['type']
         effect = self.kwargs['effect'].upper()
         action_body = request.data
-        self.action_list_collection.update({"force": force, "effect": effect, "type": type}, {"$set": action_body})
+        self.action_list_collection.update_one({"force": force, "effect": effect, "type": type}, {"$set": action_body})
         return Response(status=200)
 

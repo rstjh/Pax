@@ -177,7 +177,7 @@ class SystemAnalysis:
     def save_system_data(self, system_data):
         client = pm.MongoClient(host=os.environ.get('DB_HOSTNAME'), port=int(os.environ.get('DB_PORT')))
         system_collection = client[os.environ.get('DB_NAME')]['system']
-        system_collection.remove({"id": self.system_id})
+        system_collection.delete_many({"id": self.system_id})
         system_data.update({
             "_id": self.system_id
         })

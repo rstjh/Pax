@@ -24,6 +24,17 @@ from api.views.risk_appetite import RiskAppetiteDetail, RiskAppetiteView
 from api.views.risk import NetworkRiskAnalysis, SystemRiskAnalysis, \
     CompareSystemRiskAnalysis, TaskDependencyRiskAnalysis
 
+# Defender Risk & Control Roadmap Tool (Phase 1 — IT)
+from api.views.capabilities import CapabilitiesView, CapabilityImportView, \
+    CapabilityRiskRollupView
+from api.views.it_assets import ITAssetsView
+from api.views.controls import ControlsView
+from api.views.attack_reference import AttackReferenceView, AttackCoverageView, \
+    AttackReferenceImportView
+from api.views.risks import RisksView
+from api.views.roadmap import RoadmapCandidatesView, RoadmapPlanView
+from api.views.reports import ReportSummaryDocxView
+
 
 SchemaView = get_schema_view(
     openapi.Info(
@@ -159,6 +170,55 @@ urlpatterns = format_suffix_patterns([
     url(r'^api/v{}/reset/'.format(
         api_config.API_VERSION),
         ResetData.as_view()),
+
+    # Defender Risk & Control Roadmap Tool (Phase 1 — IT)
+    url(r'^api/v{}/capabilities/import/$'.format(
+        api_config.API_VERSION),
+        CapabilityImportView.as_view()),
+
+    url(r'^api/v{}/capabilities/(?P<capabilityId>[^/]+)/risk_rollup/$'.format(
+        api_config.API_VERSION),
+        CapabilityRiskRollupView.as_view()),
+
+    url(r'^api/v{}/capabilities/$'.format(
+        api_config.API_VERSION),
+        CapabilitiesView.as_view()),
+
+    url(r'^api/v{}/it_assets/$'.format(
+        api_config.API_VERSION),
+        ITAssetsView.as_view()),
+
+    url(r'^api/v{}/controls/$'.format(
+        api_config.API_VERSION),
+        ControlsView.as_view()),
+
+    url(r'^api/v{}/attack_reference/import/$'.format(
+        api_config.API_VERSION),
+        AttackReferenceImportView.as_view()),
+
+    url(r'^api/v{}/attack_reference/coverage/$'.format(
+        api_config.API_VERSION),
+        AttackCoverageView.as_view()),
+
+    url(r'^api/v{}/attack_reference/$'.format(
+        api_config.API_VERSION),
+        AttackReferenceView.as_view()),
+
+    url(r'^api/v{}/risks/$'.format(
+        api_config.API_VERSION),
+        RisksView.as_view()),
+
+    url(r'^api/v{}/roadmap/candidates/$'.format(
+        api_config.API_VERSION),
+        RoadmapCandidatesView.as_view()),
+
+    url(r'^api/v{}/roadmap/$'.format(
+        api_config.API_VERSION),
+        RoadmapPlanView.as_view()),
+
+    url(r'^api/v{}/reports/summary.docx$'.format(
+        api_config.API_VERSION),
+        ReportSummaryDocxView.as_view()),
 
     # Swagger
     url(r'^swagger/$',

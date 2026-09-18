@@ -25,24 +25,24 @@
         <li [ngClass]="{'active': selectedTab=='riskAppetite'}" style="border-radius: 4px;">
           <a routerLink="risk-appetite" (click)="assignSelectedTab('riskAppetite')">Risk appetite</a>
         </li>
-        <!-- <li>
-          <a routerLink="" routerLinkActive="active">Risk data terminal</a>
-        </li> -->
-        <!-- <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Commander dashboard <span class="caret"></span></a>
+        <li class="dropdown" [ngClass]="{'active': selectedTab=='riskRoadmap'}" style="border-radius: 4px;">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Risk Roadmap Tool <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li>
-              <a routerLink="dashboard">Team overview</a>
-            </li>
+            <li><a routerLink="dashboard" (click)="assignSelectedTab('riskRoadmap')">Dashboard</a></li>
             <li role="separator" class="divider"></li>
-            <li>
-              <a routerLink="dashboard/blue-team">Blue team</a>
-            </li>
-            <li>
-              <a routerLink="dashboard/red-team">Red team</a>
-            </li>
+            <li><a routerLink="capabilities" (click)="assignSelectedTab('riskRoadmap')">Capability Model</a></li>
+            <li><a routerLink="assets" (click)="assignSelectedTab('riskRoadmap')">Asset Register</a></li>
+            <li><a routerLink="controls" (click)="assignSelectedTab('riskRoadmap')">Control Register</a></li>
+            <li><a routerLink="attack-coverage" (click)="assignSelectedTab('riskRoadmap')">ATT&amp;CK Coverage Matrix</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a routerLink="risk-assessment" (click)="assignSelectedTab('riskRoadmap')">Risk Assessment</a></li>
+            <li><a routerLink="risk-register" (click)="assignSelectedTab('riskRoadmap')">Risk Register</a></li>
+            <li><a routerLink="assessment-wizard" (click)="assignSelectedTab('riskRoadmap')">Assessment Wizard</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a routerLink="roadmap" (click)="assignSelectedTab('riskRoadmap')">Roadmap</a></li>
+            <li><a routerLink="reports" (click)="assignSelectedTab('riskRoadmap')">Reports</a></li>
           </ul>
-        </li> -->
+        </li>
       </ul>
     </div>
   </div>

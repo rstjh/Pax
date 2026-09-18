@@ -1,0 +1,64 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Risk Assessment</h2>
+	<p class="text-muted">Score a risk using FAIR-style quantitative inputs (loss event frequency x loss magnitude), linked to assets and ATT&amp;CK techniques.</p>
+
+	<div class="form-group">
+		<label>Risk</label>
+		<select class="form-control" style="max-width: 400px;" [(ngModel)]="selectedRiskId" (ngModelChange)="onSelectRisk()">
+			<option value="new">-- New risk --</option>
+			<option *ngFor="let risk of risks" [value]="risk._id">{{risk.title}}</option>
+		</select>
+	</div>
+
+	<form (ngSubmit)="submit()">
+		<div class="row">
+			<div class="col-md-6">
+				<label>Title</label>
+				<input class="form-control" [(ngModel)]="form.title" name="title" required>
+			</div>
+			<div class="col-md-6">
+				<label>Owner</label>
+				<input class="form-control" [(ngModel)]="form.owner" name="owner">
+			</div>
+		</div>
+		<div class="row" style="padding-top: 10px;">
+			<div class="col-md-6">
+				<label>Linked assets</label>
+				<select class="form-control" multiple [(ngModel)]="form.assetIds" name="assetIds">
+					<option *ngFor="let asset of assets" [value]="asset._id">{{asset.name}}</option>
+				</select>
+			</div>
+			<div class="col-md-6">
+				<label>Linked ATT&amp;CK techniques</label>
+				<select class="form-control" multiple [(ngModel)]="form.attackTechniqueIds" name="attackTechniqueIds">
+					<option *ngFor="let technique of techniques" [value]="technique.id">{{technique.id}} {{technique.name}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="row" style="padding-top: 10px;">
+			<div class="col-md-3">
+				<label>Loss event frequency (occurrences / year)</label>
+				<input type="number" step="0.1" class="form-control" [(ngModel)]="form.lef" name="lef" required>
+			</div>
+			<div class="col-md-3">
+				<label>Loss magnitude ($ per occurrence)</label>
+				<input type="number" class="form-control" [(ngModel)]="form.lm" name="lm" required>
+			</div>
+			<div class="col-md-6">
+				<label>Description</label>
+				<textarea class="form-control" [(ngModel)]="form.description" name="description"></textarea>
+			</div>
+		</div>
+		<div style="padding-top: 15px;">
+			<button type="submit" class="btn btn-primary" [disabled]="saving">Score risk</button>
+		</div>
+	</form>
+
+	<div class="panel panel-success" style="margin-top: 20px;" *ngIf="result">
+		<div class="panel-heading"><b>Computed FAIR score</b></div>
+		<div class="panel-body">
+			<p>Inherent annualised loss expectancy: <b>{{result.inherentAle | currency:'USD':'symbol':'1.0-0'}}</b></p>
+			<p>Residual annualised loss expectancy (after mapped controls): <b>{{result.residualAle | currency:'USD':'symbol':'1.0-0'}}</b></p>
+		</div>
+	</div>
+</div>

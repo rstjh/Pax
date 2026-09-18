@@ -44,7 +44,7 @@ class ActionTemplatesView(RetrieveUpdateDestroyAPIView):
         ActionTemplatesModel(
             data=request.data).is_valid(
             raise_exception=True)
-        self.action_templates_collection.insert(request.data)
+        self.action_templates_collection.insert_one(request.data)
         return Response(status=201)
 
     @swagger_auto_schema(manual_parameters=[MONGO_ID_R], responses={204: "No content"})
@@ -55,7 +55,7 @@ class ActionTemplatesView(RetrieveUpdateDestroyAPIView):
         mongo_id = self.request.GET.get('id', None)
         if mongo_id is None:
             raise ValueError("Please provide a Mongo ID as query parameter (_id)")
-        self.action_templates_collection.update(
+        self.action_templates_collection.update_one(
             {'_id': ObjectId(mongo_id)},
             {"$set": request.data},
             upsert=False)

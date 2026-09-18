@@ -83,7 +83,7 @@ class CVISystemView(RetrieveUpdateDestroyAPIView):
         CVISystemModel(
             data=request.data).is_valid(
             raise_exception=True)
-        self.cvi_collection.update(
+        self.cvi_collection.update_one(
             {'id': self.kwargs['systemId']},
             {"$set": request.data},
             upsert=False)
@@ -94,7 +94,7 @@ class CVISystemView(RetrieveUpdateDestroyAPIView):
         CVISystemModel(
             data=request.data).is_valid(
             raise_exception=True)
-        self.cvi_collection.update(
+        self.cvi_collection.update_one(
             {'id': self.kwargs['systemId']},
             {"$set": request.data},
             upsert=False)

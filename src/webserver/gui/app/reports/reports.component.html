@@ -1,0 +1,15 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Reports</h2>
+	<p class="text-muted">Exportable summary of overall risk posture and roadmap.</p>
+
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<p>Total residual risk (open): <b>{{totalResidualAle | currency:'USD':'symbol':'1.0-0'}}</b></p>
+			<p>Risks — open: {{riskCounts.open || 0}}, in progress: {{riskCounts.in_progress || 0}}, closed: {{riskCounts.closed || 0}}</p>
+			<p>Roadmap items planned: {{planCount}}</p>
+		</div>
+	</div>
+
+	<a [href]="reportUrl" class="btn btn-primary" target="_blank">Download Word report (.docx)</a>
+	<button type="button" class="btn btn-default" style="margin-left: 10px;" onclick="window.print()">Print this summary (PDF via browser print)</button>
+</div>

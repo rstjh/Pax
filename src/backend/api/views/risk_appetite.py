@@ -96,7 +96,7 @@ class RiskAppetiteDetail(RetrieveUpdateDestroyAPIView):
         return Response(status=201)
 
     def patch(self, request, *args, **kwargs):
-        self.risk_appetite_collection.update({
+        self.risk_appetite_collection.update_one({
             'missionId': self.kwargs['missionId']},
             {"$set": request.data},
             upsert=False)

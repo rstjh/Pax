@@ -1,0 +1,69 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Risk Register</h2>
+	<p class="text-muted">Full lifecycle of tracked risks — status, owner, treatment decision, and review date. Feeds from Risk Assessment scores.</p>
+
+	<div class="row" style="margin-bottom: 10px;">
+		<div class="col-md-3">
+			<select class="form-control" [(ngModel)]="statusFilter">
+				<option value="">All statuses</option>
+				<option *ngFor="let status of statusOptions" [value]="status">{{status}}</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<input class="form-control" placeholder="Filter by owner" [(ngModel)]="ownerFilter">
+		</div>
+	</div>
+
+	<table class="table table-bordered table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th (click)="setSort('owner')" style="cursor:pointer;">Owner</th>
+				<th (click)="setSort('status')" style="cursor:pointer;">Status</th>
+				<th>Treatment</th>
+				<th (click)="setSort('residualAle')" style="cursor:pointer;">Residual ALE</th>
+				<th (click)="setSort('reviewDate')" style="cursor:pointer;">Review date</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let risk of filteredSortedRisks()" [class.danger]="isOverdue(risk)">
+				<ng-container *ngIf="editingId !== risk._id">
+					<td>{{risk.title}}</td>
+					<td>{{risk.owner}}</td>
+					<td>{{risk.status}}</td>
+					<td>{{risk.treatment}}</td>
+					<td>{{risk.residualAle | currency:'USD':'symbol':'1.0-0'}}</td>
+					<td>{{risk.reviewDate}} <span *ngIf="isOverdue(risk)" class="label label-danger">Overdue</span></td>
+					<td>
+						<button type="button" class="btn btn-default btn-sm" (click)="startEdit(risk)">Edit</button>
+						<button type="button" class="btn btn-danger btn-sm" (click)="deleteRisk(risk)">Delete</button>
+					</td>
+				</ng-container>
+				<ng-container *ngIf="editingId === risk._id">
+					<td>{{risk.title}}</td>
+					<td><input class="form-control" [(ngModel)]="editRisk.owner" name="editOwner"></td>
+					<td>
+						<select class="form-control" [(ngModel)]="editRisk.status" name="editStatus">
+							<option *ngFor="let status of statusOptions" [value]="status">{{status}}</option>
+						</select>
+					</td>
+					<td>
+						<select class="form-control" [(ngModel)]="editRisk.treatment" name="editTreatment">
+							<option *ngFor="let treatment of treatmentOptions" [value]="treatment">{{treatment}}</option>
+						</select>
+					</td>
+					<td>{{risk.residualAle | currency:'USD':'symbol':'1.0-0'}}</td>
+					<td><input type="date" class="form-control" [(ngModel)]="editRisk.reviewDate" name="editReviewDate"></td>
+					<td>
+						<button type="button" class="btn btn-primary btn-sm" (click)="saveEdit()">Save</button>
+						<button type="button" class="btn btn-default btn-sm" (click)="cancelEdit()">Cancel</button>
+					</td>
+				</ng-container>
+			</tr>
+			<tr *ngIf="risks.length === 0">
+				<td colspan="7" class="text-muted">No risks recorded yet — score one on the Risk Assessment page.</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,93 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Asset Register</h2>
+	<p class="text-muted">IT assets, each with an owner, criticality, and the business capabilities they support.</p>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><b>Add asset</b></div>
+		<div class="panel-body">
+			<form (ngSubmit)="createAsset()">
+				<div class="row">
+					<div class="col-md-3">
+						<input class="form-control" placeholder="Name" [(ngModel)]="newAsset.name" name="newName" required>
+					</div>
+					<div class="col-md-3">
+						<input class="form-control" placeholder="Owner" [(ngModel)]="newAsset.owner" name="newOwner">
+					</div>
+					<div class="col-md-2">
+						<select class="form-control" [(ngModel)]="newAsset.criticality" name="newCriticality">
+							<option *ngFor="let level of criticalityOptions" [value]="level">{{level}}</option>
+						</select>
+					</div>
+					<div class="col-md-3">
+						<select class="form-control" multiple [(ngModel)]="newAsset.capabilityIds" name="newCapabilities">
+							<option *ngFor="let capability of capabilities" [value]="capability.refCode">{{capability.refCode}} {{capability.name}}</option>
+						</select>
+					</div>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+				<div class="row" style="padding-top: 10px;">
+					<div class="col-md-12">
+						<input class="form-control" placeholder="Description" [(ngModel)]="newAsset.description" name="newDescription">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<table class="table table-bordered table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Owner</th>
+				<th>Criticality</th>
+				<th>Domain</th>
+				<th>Capabilities</th>
+				<th>Description</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let asset of assets">
+				<ng-container *ngIf="editingId !== asset._id">
+					<td>{{asset.name}}</td>
+					<td>{{asset.owner}}</td>
+					<td>{{asset.criticality}}</td>
+					<td>{{asset.domain}}</td>
+					<td>
+						<span *ngFor="let refCode of asset.capabilityIds">{{capabilityName(refCode)}}<br></span>
+					</td>
+					<td>{{asset.description}}</td>
+					<td>
+						<button type="button" class="btn btn-default btn-sm" (click)="startEdit(asset)">Edit</button>
+						<button type="button" class="btn btn-danger btn-sm" (click)="deleteAsset(asset)">Delete</button>
+					</td>
+				</ng-container>
+				<ng-container *ngIf="editingId === asset._id">
+					<td><input class="form-control" [(ngModel)]="editAsset.name" name="editName"></td>
+					<td><input class="form-control" [(ngModel)]="editAsset.owner" name="editOwner"></td>
+					<td>
+						<select class="form-control" [(ngModel)]="editAsset.criticality" name="editCriticality">
+							<option *ngFor="let level of criticalityOptions" [value]="level">{{level}}</option>
+						</select>
+					</td>
+					<td>{{editAsset.domain}}</td>
+					<td>
+						<select class="form-control" multiple [(ngModel)]="editAsset.capabilityIds" name="editCapabilities">
+							<option *ngFor="let capability of capabilities" [value]="capability.refCode">{{capability.refCode}} {{capability.name}}</option>
+						</select>
+					</td>
+					<td><input class="form-control" [(ngModel)]="editAsset.description" name="editDescription"></td>
+					<td>
+						<button type="button" class="btn btn-primary btn-sm" (click)="saveEdit()">Save</button>
+						<button type="button" class="btn btn-default btn-sm" (click)="cancelEdit()">Cancel</button>
+					</td>
+				</ng-container>
+			</tr>
+			<tr *ngIf="assets.length === 0">
+				<td colspan="7" class="text-muted">No assets recorded yet.</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
