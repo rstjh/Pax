@@ -273,7 +273,7 @@ class TestGetAssetCoordinates(TestCase):
                 }]
         }
 
-        self.assertEquals(SystemAnalysis.add_asset_threats(system_data, action_data), results)
+        self.assertEqual(SystemAnalysis.add_asset_threats(system_data, action_data), results)
 
     # @todo remove mocks of get_unit_data and offensive_or_defensive
     @patch("analytics.SystemAnalysis.offensive_or_defensive", mock_offensive_or_defensive)
@@ -336,7 +336,7 @@ class TestGetAssetCoordinates(TestCase):
                 }]
         }
 
-        self.assertEquals(SystemAnalysis.add_asset_threats(system_data, action_data), results)
+        self.assertEqual(SystemAnalysis.add_asset_threats(system_data, action_data), results)
 
 
 

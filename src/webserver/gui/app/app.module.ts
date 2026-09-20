@@ -2,6 +2,7 @@
 import { NgModule }                  from '@angular/core';
 import { BrowserModule }             from '@angular/platform-browser';
 import { HttpClientModule }          from '@angular/common/http';
+import { FormsModule }               from '@angular/forms';
 
 import { ModalModule }               from 'ngx-bootstrap/modal';
 
@@ -26,6 +27,18 @@ import { ThreatInfoWindow }          from './risk-graph/modals/threat-info/threa
 import { NavBarComponent }           from './navbar/navbar.component';
 import { NotFoundComponent }         from './not-found/not-found.component';
 
+// Defender Risk & Control Roadmap Tool (Phase 1 — IT)
+import { CapabilitiesComponent }     from './capabilities/capabilities.component';
+import { ITAssetsComponent }         from './it-assets/it-assets.component';
+import { ControlsComponent }         from './controls/controls.component';
+import { AttackCoverageComponent }   from './attack-coverage/attack-coverage.component';
+import { RiskAssessmentComponent }   from './risks/risk-assessment.component';
+import { RiskRegisterComponent }     from './risk-register/risk-register.component';
+import { AssessmentWizardComponent } from './assessment-wizard/assessment-wizard.component';
+import { RoadmapComponent }          from './roadmap/roadmap.component';
+import { DashboardComponent }        from './dashboard/dashboard.component';
+import { ReportsComponent }          from './reports/reports.component';
+
 import { routing }                   from './app.routing';
 
 
@@ -37,6 +50,7 @@ import { routing }                   from './app.routing';
         NgxDatatableModule,
         BrowserModule,
         HttpClientModule,
+        FormsModule,
         ChartsModule,
         routing
     ],
@@ -50,7 +64,17 @@ import { routing }                   from './app.routing';
         NotFoundComponent,
         ActionWindow,
         AssetInfoWindow,
-        ThreatInfoWindow
+        ThreatInfoWindow,
+        CapabilitiesComponent,
+        ITAssetsComponent,
+        ControlsComponent,
+        AttackCoverageComponent,
+        RiskAssessmentComponent,
+        RiskRegisterComponent,
+        AssessmentWizardComponent,
+        RoadmapComponent,
+        DashboardComponent,
+        ReportsComponent
     ],
     bootstrap: [
       AppComponent

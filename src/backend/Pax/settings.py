@@ -1,6 +1,6 @@
 import os
 
-from utils.MongoDataLoader import reset_app_data
+from utils.MongoDataLoader import reset_app_data, seed_reference_data
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -163,3 +163,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 reset_app_data()
+# Idempotent (insert-if-empty only) — unlike reset_app_data(), this never
+# drops the Risk & Control Roadmap Tool's collections, since those hold data
+# the team manually enters and must survive every restart/autoreload.
+seed_reference_data()

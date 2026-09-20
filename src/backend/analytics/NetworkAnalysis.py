@@ -18,7 +18,7 @@ class NetworkAnalysis:
     def save_network_data(self, network_data):
         client = pm.MongoClient(host=os.environ.get('DB_HOSTNAME'), port=int(os.environ.get('DB_PORT')))
         system_collection = client[os.environ.get('DB_NAME')]['network']
-        system_collection.remove({"system_id": self.system_id})
+        system_collection.delete_many({"system_id": self.system_id})
         network_data.update({
             "_id": self.system_id + '-NETWORK',
             "system_id" : self.system_id

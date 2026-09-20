@@ -1,0 +1,65 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Assessment Wizard</h2>
+	<p class="text-muted">Guided, repeatable workflow: pick a capability, review the risk assessment for each supporting asset, then recalculate the capability-level rollup.</p>
+
+	<div *ngIf="step === 1">
+		<div class="form-group">
+			<label>Capability to assess</label>
+			<select class="form-control" style="max-width: 400px;" [(ngModel)]="selectedCapabilityRefCode">
+				<option [ngValue]="null">-- Select a capability --</option>
+				<option *ngFor="let capability of capabilities" [value]="capability.refCode">{{capability.refCode}} {{capability.name}}</option>
+			</select>
+		</div>
+		<button type="button" class="btn btn-primary" [disabled]="!selectedCapabilityRefCode" (click)="startAssessment()">Start assessment</button>
+	</div>
+
+	<div *ngIf="step === 2">
+		<h4>Supporting assets for {{selectedCapabilityRefCode}}</h4>
+		<div class="panel panel-default" *ngFor="let asset of supportingAssets">
+			<div class="panel-heading"><b>{{asset.name}}</b> ({{asset.criticality}})</div>
+			<div class="panel-body">
+				<table class="table table-condensed" *ngIf="risksByAssetId[asset._id]?.length">
+					<thead><tr><th>Risk</th><th>Residual ALE</th><th>Status</th></tr></thead>
+					<tbody>
+						<tr *ngFor="let risk of risksByAssetId[asset._id]">
+							<td>{{risk.title}}</td>
+							<td>{{risk.residualAle | currency:'USD':'symbol':'1.0-0'}}</td>
+							<td>{{risk.status}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<p *ngIf="!risksByAssetId[asset._id]?.length" class="text-muted">No risks assessed yet for this asset.</p>
+
+				<div class="row">
+					<div class="col-md-4">
+						<input class="form-control" placeholder="New risk title" [(ngModel)]="draftByAssetId[asset._id].title" [name]="'title-' + asset._id">
+					</div>
+					<div class="col-md-3">
+						<input type="number" step="0.1" class="form-control" placeholder="Frequency / yr" [(ngModel)]="draftByAssetId[asset._id].lef" [name]="'lef-' + asset._id">
+					</div>
+					<div class="col-md-3">
+						<input type="number" class="form-control" placeholder="Loss magnitude ($)" [(ngModel)]="draftByAssetId[asset._id].lm" [name]="'lm-' + asset._id">
+					</div>
+					<div class="col-md-2">
+						<button type="button" class="btn btn-default" (click)="addRiskForAsset(asset)">Add risk</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<p class="text-muted" *ngIf="supportingAssets.length === 0">No assets are linked to this capability yet — link some on the Asset Register page.</p>
+
+		<button type="button" class="btn btn-primary" (click)="finishAssessment()">Finish &amp; recalculate rollup</button>
+	</div>
+
+	<div *ngIf="step === 3">
+		<div class="panel panel-success">
+			<div class="panel-heading"><b>Capability rollup complete</b></div>
+			<div class="panel-body">
+				<p>Assets assessed: {{rollup.assetCount}}</p>
+				<p>Open risks: {{rollup.riskCount}}</p>
+				<p>Capability-level residual risk: <b>{{rollup.residualAle | currency:'USD':'symbol':'1.0-0'}}</b></p>
+			</div>
+		</div>
+		<button type="button" class="btn btn-default" (click)="restart()">Assess another capability</button>
+	</div>
+</div>

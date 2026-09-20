@@ -1,0 +1,55 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Dashboard</h2>
+	<p class="text-muted">Overall risk posture, top coverage gaps, and roadmap status at a glance.</p>
+
+	<div class="row">
+		<div class="col-md-3">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Total residual risk (open)</div>
+				<div class="panel-body"><h3>{{totalResidualAle | currency:'USD':'symbol':'1.0-0'}}</h3></div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Open risks</div>
+				<div class="panel-body"><h3>{{riskCounts.open || 0}}</h3></div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">In progress</div>
+				<div class="panel-body"><h3>{{riskCounts.in_progress || 0}}</h3></div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel" [ngClass]="overdueCount > 0 ? 'panel-danger' : 'panel-default'">
+				<div class="panel-heading">Overdue reviews</div>
+				<div class="panel-body"><h3>{{overdueCount}}</h3></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading"><b>Top coverage gaps (Enterprise ATT&amp;CK)</b></div>
+				<div class="panel-body">
+					<ul>
+						<li *ngFor="let gap of topGaps">{{gap.techniqueId}} — {{gap.techniqueName}}</li>
+					</ul>
+					<p class="text-muted" *ngIf="topGaps.length === 0">No coverage gaps found.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading"><b>Roadmap status</b></div>
+				<div class="panel-body">
+					<p>Planned: {{planCounts.planned || 0}}</p>
+					<p>In progress: {{planCounts.in_progress || 0}}</p>
+					<p>Done: {{planCounts.done || 0}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

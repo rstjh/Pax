@@ -1,18 +1,18 @@
 import json
+
 import pymongo as pm
 
-from utils.data.EffectData import default_effects
-from utils.data.HostileResponseData import default_hostile_responses
+from utils import SystemConfig as config
 from utils.data.ActionListData import default_action_list
 from utils.data.ActionTemplateData import default_action_templates
+from utils.data.AttackData import default_attack_tactics, default_attack_techniques
 from utils.data.CVISystemData import default_cvi_systems
+from utils.data.EffectData import default_effects
+from utils.data.HostileResponseData import default_hostile_responses
+from utils.data.MissionData import default_missions
 from utils.data.NetworkData import default_device_network
 from utils.data.RiskAppetite import default_risk_appetite
-from utils.data.MissionData import default_missions
 from utils.data.UnitData import default_units
-
-from utils import SystemConfig as config
-
 
 CLIENT = pm.MongoClient(
     host=config.DB_HOSTNAME,
@@ -36,6 +36,25 @@ def reset_app_data():
         reset_mongo_data(
             collection=coll,
             mongo_data=data)
+
+
+def seed_reference_data():
+    """
+    Idempotently seed reference/lookup data for the Defender Risk & Control
+    Roadmap Tool. Unlike `reset_app_data()`, this never drops anything — it
+    only inserts into a collection that is currently empty — because the
+    tool's own register collections (capabilities, itAssets, controls,
+    risks, roadmapPlan) hold data the team manually enters and must survive
+    every server restart/autoreload, not just demo seed data.
+    """
+    seed_if_empty('attackTactics', default_attack_tactics)
+    seed_if_empty('attackTechniques', default_attack_techniques)
+
+
+def seed_if_empty(collection, mongo_data):
+    coll = CLIENT[config.DB_NAME][collection]
+    if mongo_data and coll.count_documents({}) == 0:
+        coll.insert_many(mongo_data)
 
 
 def load_task_data(path):
@@ -67,7 +86,7 @@ def load_course_action_data(data):
     coas = list(set(coas))
 
     for coa in coas:
-        coa_collection.insert({
+        coa_collection.insert_one({
             'systemId': "POWER-STATION",
             'name': coa
         })
@@ -77,4 +96,4 @@ def reset_mongo_data(collection, mongo_data=None):
     coll = CLIENT[config.DB_NAME][collection]
     coll.drop()
     if mongo_data:
-        coll.insert(mongo_data)
+        coll.insert_many(mongo_data)

@@ -1,0 +1,70 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Roadmap</h2>
+	<p class="text-muted">Candidate controls ranked by ROI (risk reduction vs. cost/effort), and the sequenced plan.</p>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><b>Ranked candidates</b></div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th>Control</th>
+						<th>Cost</th>
+						<th>Risks addressed</th>
+						<th>ROI</th>
+						<th>Quarter</th>
+						<th>Rationale</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let candidate of candidates">
+						<td>{{candidate.name}}</td>
+						<td>{{candidate.cost | currency:'USD':'symbol':'1.0-0'}}</td>
+						<td>{{candidate.addressedRiskCount}}</td>
+						<td>{{candidate.roi | number:'1.0-1'}}</td>
+						<td>
+							<input class="form-control" placeholder="e.g. 2026-Q4" [(ngModel)]="quarterByControlId[candidate.controlId]" [name]="'quarter-' + candidate.controlId" [disabled]="planByControlId[candidate.controlId]">
+						</td>
+						<td>
+							<input class="form-control" placeholder="Rationale (optional)" [(ngModel)]="rationaleByControlId[candidate.controlId]" [name]="'rationale-' + candidate.controlId" [disabled]="planByControlId[candidate.controlId]">
+						</td>
+						<td>
+							<button type="button" class="btn btn-primary btn-sm" *ngIf="!planByControlId[candidate.controlId]" (click)="addToPlan(candidate)">Add to roadmap</button>
+							<span *ngIf="planByControlId[candidate.controlId]" class="label label-info">On roadmap</span>
+						</td>
+					</tr>
+					<tr *ngIf="candidates.length === 0">
+						<td colspan="7" class="text-muted">No candidate controls — all controls are already Implemented, or none exist yet.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><b>Sequenced plan</b></div>
+		<div class="panel-body">
+			<div *ngFor="let group of groupedPlan" style="margin-bottom: 15px;">
+				<h4>{{group.quarter}}</h4>
+				<table class="table table-condensed">
+					<tbody>
+						<tr *ngFor="let entry of group.entries">
+							<td>{{entry.controlId}}</td>
+							<td>{{entry.rationale}}</td>
+							<td>
+								<select class="form-control" [ngModel]="entry.status" (ngModelChange)="updateStatus(entry, $event)">
+									<option value="planned">planned</option>
+									<option value="in_progress">in_progress</option>
+									<option value="done">done</option>
+								</select>
+							</td>
+							<td><button type="button" class="btn btn-danger btn-sm" (click)="removeFromPlan(entry)">Remove</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p class="text-muted" *ngIf="plan.length === 0">Nothing on the roadmap yet — add a candidate above.</p>
+		</div>
+	</div>
+</div>

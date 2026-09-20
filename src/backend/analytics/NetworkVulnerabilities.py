@@ -189,8 +189,8 @@ class NetworkVulnerabilityActions:
         actions = self.get_cyber_effects()
         self.client = pm.MongoClient(host=os.environ.get('DB_HOSTNAME'), port=int(os.environ.get('DB_PORT')))
         self.action_collection = self.client[os.environ.get('DB_NAME')]['actions']
-        actions = self.generate_action_id(action_list=actions, action_count=self.action_collection.count())
-        self.action_collection.insert(actions)
+        actions = self.generate_action_id(action_list=actions, action_count=self.action_collection.count_documents({}))
+        self.action_collection.insert_many(actions)
 
     def generate_action_id(self, action_list, action_count):
         for i in range(len(action_list)):

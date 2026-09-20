@@ -23,6 +23,10 @@ export class NavBarComponent implements OnInit {
       this.selectedTab = 'riskAppetite';
     } else if (this.pathName == '/actions' || this.pathName == '/actions/') {
       this.selectedTab = 'actions';
+    } else if (['/dashboard', '/capabilities', '/assets', '/controls', '/attack-coverage',
+        '/risk-assessment', '/risk-register', '/assessment-wizard', '/roadmap', '/reports']
+        .indexOf(this.pathName.replace(/\/$/, '')) !== -1) {
+      this.selectedTab = 'riskRoadmap';
     };
   };
 

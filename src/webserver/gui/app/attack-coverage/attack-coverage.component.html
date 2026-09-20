@@ -1,0 +1,59 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>ATT&amp;CK Coverage Matrix</h2>
+	<p class="text-muted">Control coverage across the ATT&amp;CK lifecycle — click a technique to see the gap or mapped controls.</p>
+
+	<div class="btn-group" style="margin-bottom: 15px;">
+		<button type="button" class="btn btn-default" [class.active]="matrix === 'enterprise'" (click)="setMatrix('enterprise')">Enterprise</button>
+		<button type="button" class="btn btn-default" [class.active]="matrix === 'ics'" (click)="setMatrix('ics')">ICS</button>
+	</div>
+
+	<div style="overflow-x: auto;">
+		<table class="table table-bordered table-condensed" style="table-layout: fixed;">
+			<thead>
+				<tr>
+					<th *ngFor="let tactic of tactics" style="min-width: 160px;">{{tactic.name}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td *ngFor="let tactic of tactics" style="vertical-align: top;">
+						<div *ngFor="let technique of techniquesForTactic(tactic.id)"
+							[ngClass]="cellClass(technique)"
+							(click)="selectTechnique(technique)">
+							{{technique.techniqueName}}
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="panel panel-default" *ngIf="selectedTechnique">
+		<div class="panel-heading"><b>{{selectedTechnique.techniqueId}} — {{selectedTechnique.techniqueName}}</b></div>
+		<div class="panel-body">
+			<p *ngIf="selectedTechnique.controlCount === 0" class="text-danger">Gap — no controls mapped to this technique.</p>
+			<p *ngIf="selectedTechnique.controlCount > 0">
+				{{selectedTechnique.controlCount}} control(s) mapped, {{selectedTechnique.implementedControlCount}} implemented.
+			</p>
+		</div>
+	</div>
+
+	<div style="padding-top: 10px;">
+		<span class="coverage-cell coverage-gap" style="display: inline-block; width: 16px; height: 16px;"></span> No coverage
+		<span class="coverage-cell coverage-partial" style="display: inline-block; width: 16px; height: 16px; margin-left: 15px;"></span> Planned control(s) only
+		<span class="coverage-cell coverage-covered" style="display: inline-block; width: 16px; height: 16px; margin-left: 15px;"></span> Implemented control(s)
+	</div>
+</div>
+
+<style>
+	.coverage-cell {
+		padding: 4px 6px;
+		margin: 3px 0;
+		border-radius: 3px;
+		cursor: pointer;
+		font-size: 12px;
+	}
+	.coverage-gap { background-color: #f2dede; color: #a94442; }
+	.coverage-partial { background-color: #fcf8e3; color: #8a6d3b; }
+	.coverage-covered { background-color: #dff0d8; color: #3c763d; }
+</style>

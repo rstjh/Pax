@@ -35,7 +35,7 @@ class MissionsView(ListCreateAPIView):
         MissionsModel(
             data=request.data).is_valid(
             raise_exception=True)
-        self.missions_collection.insert(request.data)
+        self.missions_collection.insert_one(request.data)
         return Response(status=201)
 
 

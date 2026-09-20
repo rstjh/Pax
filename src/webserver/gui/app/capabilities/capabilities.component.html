@@ -1,0 +1,87 @@
+<div class="container-fluid" style="padding-top: 20px;">
+	<h2>Capability Model</h2>
+	<p class="text-muted">The business capability hierarchy (Capability &rarr; Asset &rarr; Risk), each row showing its rolled-up residual risk.</p>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><b>One-time bulk import</b></div>
+		<div class="panel-body">
+			<p class="text-muted">Upload a .docx using Word Heading 1-4 styles with numbered text (e.g. "1.2.3") for each capability.</p>
+			<input type="file" accept=".docx" (change)="onFileSelected($event)">
+			<button type="button" class="btn btn-primary" [disabled]="!importFile" (click)="importDocument()">Import</button>
+			<span style="padding-left: 10px;">{{importMessage}}</span>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><b>Add / edit capability manually</b></div>
+		<div class="panel-body">
+			<form (ngSubmit)="createCapability()">
+				<div class="row">
+					<div class="col-md-2">
+						<input class="form-control" placeholder="Ref code (e.g. 1.2.3)" [(ngModel)]="newCapability.refCode" name="newRefCode" required>
+					</div>
+					<div class="col-md-1">
+						<select class="form-control" [(ngModel)]="newCapability.level" name="newLevel">
+							<option [ngValue]="1">L1</option>
+							<option [ngValue]="2">L2</option>
+							<option [ngValue]="3">L3</option>
+							<option [ngValue]="4">L4</option>
+						</select>
+					</div>
+					<div class="col-md-3">
+						<input class="form-control" placeholder="Name" [(ngModel)]="newCapability.name" name="newName" required>
+					</div>
+					<div class="col-md-2">
+						<input class="form-control" placeholder="Parent ref code" [(ngModel)]="newCapability.parentRefCode" name="newParentRefCode">
+					</div>
+					<div class="col-md-3">
+						<input class="form-control" placeholder="Description" [(ngModel)]="newCapability.description" name="newDescription">
+					</div>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<table class="table table-bordered table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>Ref code</th>
+				<th>Name</th>
+				<th>Residual risk (rolled up)</th>
+				<th>Assets / risks</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let capability of capabilities">
+				<ng-container *ngIf="editingId !== capability._id">
+					<td>{{capability.refCode}}</td>
+					<td [style.paddingLeft.px]="indent(capability.level)">{{capability.name}}</td>
+					<td>{{rollups[capability.refCode]?.residualAle | currency:'USD':'symbol':'1.0-0'}}</td>
+					<td>{{rollups[capability.refCode]?.assetCount || 0}} assets / {{rollups[capability.refCode]?.riskCount || 0}} risks</td>
+					<td>
+						<button type="button" class="btn btn-default btn-sm" (click)="startEdit(capability)">Edit</button>
+						<button type="button" class="btn btn-danger btn-sm" (click)="deleteCapability(capability)">Delete</button>
+					</td>
+				</ng-container>
+				<ng-container *ngIf="editingId === capability._id">
+					<td><input class="form-control" [(ngModel)]="editCapability.refCode" name="editRefCode"></td>
+					<td><input class="form-control" [(ngModel)]="editCapability.name" name="editName"></td>
+					<td colspan="2">
+						<input class="form-control" placeholder="Parent ref code" [(ngModel)]="editCapability.parentRefCode" name="editParentRefCode">
+					</td>
+					<td>
+						<button type="button" class="btn btn-primary btn-sm" (click)="saveEdit()">Save</button>
+						<button type="button" class="btn btn-default btn-sm" (click)="cancelEdit()">Cancel</button>
+					</td>
+				</ng-container>
+			</tr>
+			<tr *ngIf="capabilities.length === 0">
+				<td colspan="5" class="text-muted">No capabilities yet — import the Word document above or add one manually.</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

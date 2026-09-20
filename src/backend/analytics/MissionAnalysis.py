@@ -74,7 +74,7 @@ class MissionAnalysis:
         mongo_connection = pm.MongoClient('mongodb://' + mongo_host + ':' + str(mongo_port) + '/')[mongo_database][mongo_collecton]
         mongo_connection.drop()
         mission_data[0].update({
-            'missionId': 'M' + str(mongo_connection.count())
+            'missionId': 'M' + str(mongo_connection.count_documents({}))
         })
         mongo_result = mongo_connection.insert(mission_data)
 

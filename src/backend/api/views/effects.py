@@ -64,7 +64,7 @@ class EffectsView(RetrieveUpdateDestroyAPIView):
         EffectsModel(
             data=request.data).is_valid(
             raise_exception=True)
-        self.effects_collection.insert(request.data)
+        self.effects_collection.insert_one(request.data)
         return Response(status=201)
 
     @swagger_auto_schema(manual_parameters=[MONGO_ID_R])
@@ -75,7 +75,7 @@ class EffectsView(RetrieveUpdateDestroyAPIView):
         mongo_id = self.request.GET.get('_id', None)
         if mongo_id is None:
             raise ValueError("Please provide a Mongo ID as query parameter (id)")
-        self.effects_collection.update(
+        self.effects_collection.update_one(
             {'_id': ObjectId(mongo_id)},
             {"$set": request.data},
             upsert=False)
