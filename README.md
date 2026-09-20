@@ -12,35 +12,26 @@ The Python web application uses [Django](https://www.djangoproject.com/) as the 
 
 ## Building the application
 
-We use Docker in the development of Pax to make it easy to build, run and share. The application is built across two Docker containers. Assuming a Linux terminal, execute the following command from the root directory of the Pax application:
+We use Docker in the development of Pax to make it easy to build, run and share. The application is built across two Docker containers — a Django backend (`pax:latest`) and an Angular frontend (`pax-gui:latest`), each with its own Dockerfile under `src/backend/` and `src/webserver/`. From the root directory of the Pax application:
 ```
-docker build -t pax:latest .
+./build.sh all
 ```
-This should kick off the composition of the Docker containers and the installation of the relevant Python and Node packages. To manually install Node packages please ensure you have Node (NPM) and install the essential frontend packages by executing the following commands:
+This builds both images (equivalent to `docker build -t pax:latest src/backend/.` and `docker build -t pax-gui:latest src/webserver/.`), including the installation of the relevant Python and Node packages. To manually install Node packages instead, ensure you have Node (NPM) and install the frontend packages by executing the following commands from the root directory:
 ```
-cd gui/app
+cd src/webserver/gui/app
 npm install
 ```
 The Typescript (`.ts`) files can be compiled, as normal, with the `tsc` command.
 
 ## Running the application
 
-Running the application is different from building the application. The application is run with the following command:
+Running the application is different from building the application. The application is run with the following command from the root directory:
 ```
-docker-compose up
+./build.sh up
 ```
-By default, the main Pax application is accessible on port `8200` and the MongoDB database is run on port `8210`. The `docker-compose.yml` can be altered to allow these services to run on different ports. Swagger API documentation can be found at `localhost:8200/swagger/`.
+(equivalent to `docker-compose up` from `src/`). By default, the backend API is accessible on port `8200` and the frontend GUI on port `3000`, with MongoDB on port `8210`. Swagger API documentation can be found at `localhost:8200/swagger/`; the application itself is at `localhost:3000`.
 
-Five environmental variables are associated with the project:
-```
-environment:
-  - DB_PORT=8210
-  - UI_PORT=8200
-  - DB_HOSTNAME=pax-db
-  - UI_HOSTNAME=pax-ui
-  - DB_NAME=PaxDB
-```
-These can be found and modified in the `docker-compose.yml` file.
+The env vars each service is started with — `DB_PORT`, `DB_HOSTNAME`, `DB_NAME`, `UI_PORT`, `PAX_PORT`, `PAX_HOSTNAME`, etc. — are defined in [`src/docker-compose.yml`](src/docker-compose.yml), which is the source of truth for them; edit that file to change ports or hostnames.
 
 ## Contact
 
