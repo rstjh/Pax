@@ -12,6 +12,10 @@ export class RoadmapComponent implements OnInit {
 	candidates: any[] = [];
 	plan: any[] = [];
 	planByControlId: { [controlId: string]: any } = {};
+	// Computed once whenever `plan` loads, not from the template (calling a
+	// function from *ngFor re-runs it — and rebuilds the DOM it feeds — on
+	// every change-detection cycle, which free-runs forever).
+	groupedPlan: { quarter: string, entries: any[] }[] = [];
 
 	quarterByControlId: { [controlId: string]: string } = {};
 	rationaleByControlId: { [controlId: string]: string } = {};
@@ -29,6 +33,7 @@ export class RoadmapComponent implements OnInit {
 			this.plan = plan;
 			this.planByControlId = {};
 			plan.forEach(entry => this.planByControlId[entry.controlId] = entry);
+			this.groupedPlan = this.groupByQuarter(plan);
 		});
 	};
 
@@ -54,9 +59,9 @@ export class RoadmapComponent implements OnInit {
 		this.roadmapService.deletePlanEntry(entry._id).subscribe(() => this.load());
 	};
 
-	planGroupedByQuarter() {
+	private groupByQuarter(plan: any[]) {
 		const groups: { [quarter: string]: any[] } = {};
-		this.plan.forEach(entry => {
+		plan.forEach(entry => {
 			if (!groups[entry.quarter]) {
 				groups[entry.quarter] = [];
 			}
