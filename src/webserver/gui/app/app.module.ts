@@ -26,6 +26,7 @@ import { ThreatInfoWindow }          from './risk-graph/modals/threat-info/threa
 
 import { NavBarComponent }           from './navbar/navbar.component';
 import { NotFoundComponent }         from './not-found/not-found.component';
+import { SplashComponent }           from './splash/splash.component';
 
 // Defender Risk & Control Roadmap Tool (Phase 1 — IT)
 import { CapabilitiesComponent }     from './capabilities/capabilities.component';
@@ -62,6 +63,7 @@ import { routing }                   from './app.routing';
         CVIComponent,
         NavBarComponent,
         NotFoundComponent,
+        SplashComponent,
         ActionWindow,
         AssetInfoWindow,
         ThreatInfoWindow,

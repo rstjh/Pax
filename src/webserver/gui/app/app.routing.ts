@@ -7,6 +7,7 @@ import { SurveyComponent }               from './survey/survey.component';
 import { CVIComponent }         		     from './cvi/cvi.component';
 
 import { NotFoundComponent }             from './not-found/not-found.component';
+import { SplashComponent }               from './splash/splash.component';
 
 // Defender Risk & Control Roadmap Tool (Phase 1 — IT)
 import { CapabilitiesComponent }         from './capabilities/capabilities.component';
@@ -22,8 +23,9 @@ import { ReportsComponent }              from './reports/reports.component';
 
 
 export const routing = RouterModule.forRoot([
+	{ path: '', component: SplashComponent },
 	{ path: 'risk-appetite', component: SurveyComponent },
-	{ path: '', component: RiskGraphComponent },
+	{ path: 'risk-graph', component: RiskGraphComponent },
 	{ path: 'risk-graph/:systemId', component: RiskGraphComponent },
 	{ path: 'cvi', component: CVIComponent },
 	{ path: 'actions', component: ActionsComponent },

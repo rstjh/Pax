@@ -1,0 +1,35 @@
+<section class="splash-hero">
+	<div class="splash-hero-backdrop"></div>
+	<div class="container-fluid splash-hero-inner">
+		<img class="splash-hero-logo" src="./app/assets/img/pax-logo-invert-navbar.png" alt="Pax logo">
+		<div class="splash-eyebrow">MITRE ATT&amp;CK-aligned &middot; FAIR quantified</div>
+		<h1 class="splash-title">Defender Risk &amp; Control Roadmap</h1>
+		<p class="splash-subtitle">
+			Model your capabilities, assess risk the FAIR way, map coverage against MITRE ATT&amp;CK,
+			and turn the gaps into a cost-justified control roadmap.
+		</p>
+		<div class="splash-cta">
+			<a class="btn btn-primary btn-lg splash-cta-primary" routerLink="dashboard"><i class="fa fa-tachometer"></i> Open dashboard</a>
+			<a class="btn btn-default btn-lg splash-cta-secondary" routerLink="assessment-wizard"><i class="fa fa-magic"></i> Start assessment wizard</a>
+		</div>
+	</div>
+</section>
+
+<section class="container-fluid splash-body">
+	<div class="splash-group" *ngFor="let group of groups">
+		<div class="splash-group-header">
+			<h2 class="splash-group-title">{{group.name}}</h2>
+			<p class="splash-group-description">{{group.description}}</p>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-lg-3" *ngFor="let link of group.links">
+				<a class="splash-card" [routerLink]="link.route">
+					<div class="splash-card-icon"><i class="fa" [ngClass]="link.icon"></i></div>
+					<div class="splash-card-title">{{link.title}}</div>
+					<div class="splash-card-description">{{link.description}}</div>
+					<div class="splash-card-arrow"><i class="fa fa-arrow-right"></i></div>
+				</a>
+			</div>
+		</div>
+	</div>
+</section>

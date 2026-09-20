@@ -15,7 +15,9 @@ export class NavBarComponent implements OnInit {
 
   getPathname() {
     this.pathName = window.location.pathname;
-    if (this.pathName == '/' || this.pathName == '/risk-graph') {
+    if (this.pathName == '/') {
+      this.selectedTab = 'home';
+    } else if (this.pathName == '/risk-graph' || this.pathName == '/risk-graph/') {
       this.selectedTab = 'riskNetwork';
     } else if (this.pathName == '/cvi' || this.pathName == '/cvi/') {
       this.selectedTab = 'cvi';
